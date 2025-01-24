@@ -1,0 +1,164 @@
+﻿@using ForeningenFumle.Shared.Models;
+@using ForeningenFumle.Client.Services.EventServices;
+
+<h3>Opret nyt event</h3>
+
+<EditForm Model="@EventModel"
+OnValidSubmit="@HandleValidSubmit"
+OnInvalidSubmit="@HandleInvalidSubmit"
+class="row p-3">
+
+	<DataAnnotationsValidator />
+	<ValidationSummary />
+
+	<div class="col-md-6 mb-3">
+		<label for="Title">Event titel</label>
+		<InputText id="Title" @bind-Value="EventModel.Title" class="form-control" />
+		<ValidationMessage For="@(() => EventModel.Title)" />
+	</div>
+
+	<div class="col-md-6 mb-3">
+		<label for="Description">Event beskrivelse</label>
+		<InputText type="Description" @bind-Value="EventModel.Description" class="form-control" />
+	</div>
+
+	<div class="col-md-6 mb-3">
+		<label for="EventDate">Dato for event</label>
+		<InputDate id="EventDate" @bind-Value="EventDate" class="form-control" />
+		<ValidationMessage For="@(() => EventDate)" />
+	</div>
+
+	<div class="col-md-6 mb-3">
+		<label for="EventTime">Tidspunkt for event</label>
+		<input type="timespan" id="EventTime"
+			   @bind="EventTimeString"
+			   class="form-control" />
+		<ValidationMessage For="@(() => EventTime)" />
+	</div>
+
+
+	<div class="col-md-6 mb-3">
+		<label for="Location">Lokation for event</label>
+		<InputText id="Location" @bind-Value="EventModel.Location" class="form-control" />
+		<ValidationMessage For="@(() => EventModel.Location)" />
+	</div>
+	<div class="col-12 mb-3">
+		<button type="submit" class="btn btn-primary">Opret nyt event</button>
+	</div>
+</EditForm>
+
+@if (errorMessage != null)
+{
+	<p style="color:red">@errorMessage</p>
+}
+
+@if (isSuccessBoxVisible)
+{
+	<div class="message-box">
+		<div class="message-content">
+			<h4>Event oprettet</h4>
+			<p>@(EventModel.Title) blev oprettet korrekt</p>
+			<div class="message-success">
+				<button @onclick="CloseMessageBox">OK</button>
+			</div>
+		</div>
+	</div>
+}
+
+@if (isErrorBoxVisible)
+{
+	<div class="message-box">
+		<div class="message-content">
+			<h4>Fejl</h4>
+			<p>Event blev ikke oprettet</p>
+			<p>@errorMessage</p>
+			<div class="message-success">
+				<button @onclick="CloseMessageBox">OK</button>
+			</div>
+		</div>
+	</div>
+}
+
+@code {
+	[Parameter]
+	public Event EventModel { get; set; } = new Event()
+		{
+			TimeAndDate = DateTime.Now
+		};
+
+	public ICollection<Registration> Registrations { get; set; } = new List<Registration>();
+
+	[Inject]
+	public IEventService Service { get; set; }
+
+	private List<Event> allEvents = new List<Event>();
+	private int ErrorCode { get; set; } = 0;
+	private bool isSuccessBoxVisible = false;
+	private bool isErrorBoxVisible = false;
+	private string? errorMessage;
+
+	private DateTime EventDate { get; set; } = DateTime.Now.Date;
+	private TimeSpan EventTime { get; set; } = DateTime.Now.TimeOfDay;
+
+	private string EventTimeString
+	{
+		get => EventTime.ToString(@"hh\:mm");
+		set
+		{
+			if (TimeSpan.TryParse(value, out var time))
+			{
+				EventTime = time;
+			}
+		}
+	}
+
+
+	private DateTime TimeAndDate
+	{
+		get => new DateTime(EventDate.Year, EventDate.Month, EventDate.Day, EventTime.Hours, EventTime.Minutes, 0);
+		set
+		{
+			EventDate = value.Date;
+			EventTime = value.TimeOfDay;
+		}
+	}
+
+	protected override void OnInitialized()
+	{
+		TimeAndDate = EventModel.TimeAndDate;
+	}
+
+	private async Task HandleValidSubmit()
+	{
+		EventModel.TimeAndDate = TimeAndDate;
+		// Validering af input
+		if (EventModel.Title == null || EventModel.Description == null || EventModel.Location == null)
+		{
+			errorMessage = "Alle felter skal udfyldes";
+			isErrorBoxVisible = true;
+		}
+		else if (allEvents.Any(x => x.TimeAndDate == EventModel.TimeAndDate))
+		{
+			errorMessage = $"Der findes allerede et event med samme tidspunkt: {EventModel.TimeAndDate}";
+			isErrorBoxVisible = true;
+		}
+		else
+		{
+			// Kald API-metoden for at oprette admin
+			ErrorCode = await Service.AddEvent(EventModel);
+			Console.WriteLine("Event added: return code: " + ErrorCode);
+			isSuccessBoxVisible = true;
+		}
+	}
+
+
+	private void HandleInvalidSubmit()
+	{
+	}
+
+	private void CloseMessageBox()
+	{
+		isSuccessBoxVisible = false;
+		isErrorBoxVisible = false;
+	}
+}

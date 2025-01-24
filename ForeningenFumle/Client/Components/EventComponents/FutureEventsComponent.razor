@@ -1,0 +1,72 @@
+﻿@using ForeningenFumle.Shared.Models;
+
+@using System.Linq
+
+<div class="scrollable-box">
+	@if (events != null && events.Any())
+	{
+		var groupedEvents = events
+		.GroupBy(e => e.TimeAndDate.ToString("yyyy-MM"))  // Grupperer efter år og måned
+		.OrderBy(g => g.Key); // Sorterer grupperne efter år og måned
+
+		foreach (var monthGroup in groupedEvents)
+		{
+			var monthName = DateTime.Parse(monthGroup.Key).ToString("MMM yyyy"); // Formaterer måneden som "Feb. 2025"
+
+			<!-- Month divider -->
+			<div class="month-divider">
+				<span>@monthName</span>
+				<hr />
+			</div>
+
+			<!-- Event liste for hver måned -->
+			@foreach (var item in monthGroup)
+			{
+				<button class="event-button" @onclick="OnEventClicked">
+					<div class="event-list">
+						<div class="event">
+							<div class="event-header">
+								<span class="event-date">@item.TimeAndDate.Day</span>
+								<span class="event-day">@item.TimeAndDate.DayOfWeek</span>
+							</div>
+							<div class="event-details">
+								<p class="event-title">@item.Title</p>
+								<p class="event-description">@item.Description</p>
+								<p class="event-time">@item.TimeAndDate.ToString("HH:mm") | @item.Location</p>
+							</div>
+							<div class="event-registrations">
+								<span>Tilmeldte: @item.Registrations.Count</span>
+							</div>
+							<hr />
+						</div>
+					</div>
+				</button>
+			}
+		}
+	}
+	else
+	{
+		<div class="empty-message">
+			Ingen kommende event.
+		</div>
+	}
+</div>
+
+
+@code {
+	[Inject]
+	public IEventService Service { get; set; }
+	[Inject]
+	public UserState? user { get; set; }
+	private List<Event> events = new List<Event>();
+
+	protected override async Task OnInitializedAsync()
+	{
+		events = (await Service.GetAllEvent()).ToList();
+	}
+
+	private void OnEventClicked()
+	{
+
+	}
+};

@@ -1,0 +1,70 @@
+﻿@using ForeningenFumle.Shared.Models;
+
+<div class="top-row">
+	<a href="/" class="navbar-icon">FUMLE</a>
+	<nav class="top-nav-bar">
+		<ul>
+			<li><a href="/">Forside</a></li>
+			<li><a href="/calender">Kalender</a></li>
+
+			
+				<li class="dropdown">
+					<a href="/create">Opret</a>
+					<ul class="dropdown-menu">
+					@if (user?.Admin != null)
+					{
+						<li><a href="/create/create-member">Opret Nyt Medlem</a></li>
+						<li><a href="/create/create-admin">Opret Ny Administrator</a></li>
+					}
+					<li><a href="/create/create-event">Opret Nyt Event</a></li>
+					</ul>
+				</li>
+			
+
+			<li class="dropdown">
+				<a href="/about">Om FUMLE</a>
+				<ul class="dropdown-menu">
+					<li><a href="/generalfor">Generalforsamling</a></li>
+					<li><a href="/bestyrelse">Bestyrelsen</a></li>
+					<li><a href="/vedtagter">Vedtægter</a></li>
+				</ul>
+			</li>
+		</ul>
+	</nav>
+	<nav class="top-nav-bar">
+		<ul>
+			<li class="dropdown">
+				<a href="/profile" class="user-info">Velkommen, @(user?.Admin?.Username ?? user?.Member?.Username)</a>
+				<ul class="dropdown-menu">
+					<li><a >Log ud</a></li>
+				</ul>
+			</li>
+		</ul>
+	</nav>
+</div>
+
+@code {
+	[Inject]
+	public UserState? user { get; set; }
+
+	protected override void OnInitialized()
+	{
+		if (user != null)
+		{
+			user.OnChange += StateHasChanged;
+		}
+	}
+
+	public void Dispose()
+	{
+		if (user != null)
+		{
+			user.OnChange -= StateHasChanged;
+		}
+	}
+
+	public static void LogOut()
+	{
+		MainLayout.Logout();
+	}
+}

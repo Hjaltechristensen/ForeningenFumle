@@ -1,0 +1,23 @@
+﻿@using ForeningenFumle.Client.Pages;
+@using ForeningenFumle.Client.Components;
+@inherits LayoutComponentBase
+<NavMenu />
+
+<main>
+	@Body
+	<LoginComponent OnClose="CloseModal" Show="isLoginVisible"></LoginComponent>
+</main>
+
+@code {
+	public static bool isLoginVisible = true; // Sæt den til 'true' for at vise login ved opstart, eller håndter som du vil
+
+	private void CloseModal()
+	{
+		isLoginVisible = false; // Luk modalvinduet ved at ændre synligheden
+	}
+
+	public static void Logout()
+	{
+		isLoginVisible = true;
+	}
+}

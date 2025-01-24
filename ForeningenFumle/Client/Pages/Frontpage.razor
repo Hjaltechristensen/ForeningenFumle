@@ -1,0 +1,22 @@
+﻿@using ForeningenFumle.Client.Components.AdminComponents;
+@using ForeningenFumle.Client.Components.EventComponents;
+@page "/"
+
+<div class="container">
+    <div class="image-container">
+        <img src="fumlelogo.png" alt="Foreningen Fumle" class="picture" />
+    </div>
+
+    <div class="sidebar">
+        <FutureEventsComponent/>
+    </div>
+
+    <div class="chatbox">
+        <h2>Chat</h2>
+        <p>Dette er chatområdet.</p>
+    </div>
+</div>
+
+@code {
+    // Din backend-logik
+}

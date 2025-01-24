@@ -1,0 +1,105 @@
+﻿.event-list {
+    font-family: Arial, sans-serif;
+    max-width: 600px;
+    margin: 0 auto; /* Centrer indholdet */
+    padding: 10px;
+    border: 1px solid #ddd; /* Valgfri: Tilføj en kant rundt om hver event */
+    border-radius: 8px; /* Bløde hjørner */
+    background-color: #f9f9f9; /* Valgfri: Baggrundsfarve for hver event */
+}
+
+.event {
+    margin-bottom: 10px;
+}
+
+.event-header {
+    display: flex;
+    flex-direction: column; /* Stabler elementerne lodret */
+    align-items: flex-start; /* Justerer elementerne til venstre */
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.event-date {
+    font-size: 18px; /* Gør datoen lidt større */
+    font-weight: bold;
+    color: #333;
+}
+
+.event-day {
+    font-size: 15px; /* Mindre tekst for ugedagen */
+    color: #555;
+    margin-top: 5px; /* Lidt afstand mellem dato og ugedag */
+}
+
+.event-details {
+    color: #666;
+    padding-left: 20%;
+    line-height: 1.1;
+}
+
+.evet-title {
+    font-weight: bold;
+    font-size: 20px;
+}
+
+.event-description {
+    margin: 3px 0;
+    font-size: 14px;
+}
+
+.event-time {
+    margin: 2px 0;
+    font-size: 14px;
+}
+
+.event-registrations {
+    font-size: 14px;
+    color: #555;
+    margin-top: 5px;
+    text-align: start;
+}
+
+hr {
+    border: none;
+    border-top: 8px solid;
+    border-color: gray;
+    border-radius: 50px;
+    margin: 5px 0; /* Mindre afstand mellem linjer */
+}
+
+.month-divider {
+    text-align: center;
+    margin: 10px 0;
+    font-size: 14px;
+    color: #333;
+}
+
+    .month-divider span {
+        font-weight: bold;
+        padding: 0 8px;
+    }
+
+.scrollable-box {
+    width: auto;
+    height: 100%;
+    border: 1px solid #ccc;
+    border-radius: 8px;
+    padding: 5px;
+    overflow-y: auto;
+    background-color: #f9f9f9;
+}
+
+.event-button {
+    display: block; /* Sørger for, at knappen fylder hele linjen */
+    width: 100%; /* Sikrer, at knappen strækker sig over hele bredden af sin container */
+    margin: 10px 0; /* Lidt afstand mellem knapper */
+    padding: 0; /* Fjern evt. ekstra padding, hvis nødvendigt */
+    border: none; /* Fjern knapramme, hvis den ikke ønskes */
+    background: none; /* Fjern knapbaggrund, hvis det er passende */
+}
+
+.event-button:hover {
+    border: solid 1px;
+    border-radius: 8px;
+}

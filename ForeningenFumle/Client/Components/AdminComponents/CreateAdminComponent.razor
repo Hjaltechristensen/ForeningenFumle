@@ -1,0 +1,144 @@
+﻿@using ForeningenFumle.Shared.Models;
+@using ForeningenFumle.Client.Services.AdminServices;
+
+<h3>Opret ny administrator</h3>
+
+<EditForm Model="@AdminModel"
+		  OnValidSubmit="@HandleValidSubmit"
+		  OnInvalidSubmit="@HandleInvalidSubmit"
+		  class="row p-3">
+
+	<DataAnnotationsValidator />
+	<ValidationSummary />
+
+	<div class="col-md-6 mb-3">
+		<label for="Username">Brugernavn</label>
+		<InputText id="Username" @bind-Value="AdminModel.Username" class="form-control" />
+		<ValidationMessage For="@(() => AdminModel.Username)" />
+	</div>
+
+	<div class="col-md-6 mb-3">
+		<label for="Password">Password</label>
+		<InputText type="password" @bind-Value="password" class="form-control" />
+	</div>
+
+	<div class="col-md-6 mb-3">
+		<label for="Name">Navn</label>
+		<InputText id="Name" @bind-Value="AdminModel.Name" class="form-control" />
+		<ValidationMessage For="@(() => AdminModel.Name)" />
+	</div>
+	<div class="col-md-6 mb-3">
+		<label for="Email">Email</label>
+		<InputText id="Email" @bind-Value="AdminModel.Email" class="form-control" />
+		<ValidationMessage For="@(() => AdminModel.Email)" />
+	</div>
+	<div class="col-md-6 mb-3">
+		<label for="Phonenumber">Telefon nummer</label>
+		<InputText id="Phonenumber" @bind-Value="AdminModel.Phonenumber" class="form-control" />
+		<ValidationMessage For="@(() => AdminModel.Phonenumber)" />
+	</div>
+	<div class="col-12 mb-3">
+		<button type="submit" class="btn btn-primary">Opret ny administrator</button>
+	</div>
+</EditForm>
+
+@if (errorMessage != null)
+{
+	<p style="color:red">@errorMessage</p>
+}
+
+@if (isSuccessBoxVisible)
+{
+	<div class="message-box">
+		<div class="message-content">
+			<h4>Admin oprettet</h4>
+			<p>@(AdminModel.Name) blev oprettet korrekt</p>
+			<div class="message-success">
+				<button @onclick="CloseMessageBox">OK</button>
+			</div>
+		</div>
+	</div>
+}
+
+@if (isErrorBoxVisible)
+{
+	<div class="message-box">
+		<div class="message-content">
+			<h4>Fejl</h4>
+			<p>Admin blev ikke oprettet</p>
+			<p>@errorMessage</p>
+			<div class="message-success">
+				<button @onclick="CloseMessageBox">OK</button>
+			</div>
+		</div>
+	</div>
+}
+
+@code {
+	[Parameter]
+	public Admin AdminModel { get; set; } = new Admin(); // Initialisering af AdminModel
+	[Inject]
+	public IAdminService Service { get; set; }
+
+	private List<Admin> allAdmins = new List<Admin>();
+	private int ErrorCode { get; set; } = 0;
+	private bool isSuccessBoxVisible = false;
+	private bool isErrorBoxVisible = false;
+	private string? errorMessage;
+	private string password;
+
+	// Denne metode bliver kaldt under komponentens initialisering.
+	protected override async Task OnInitializedAsync()
+	{
+		AdminModel = new Admin(); // Initialisering, hvis AdminModel er null
+	}
+
+	private async Task HandleValidSubmit()
+	{
+		// Validering af input
+		if (AdminModel.Name == null || AdminModel.Phonenumber == null || AdminModel.Email == null || AdminModel.Username == null)
+		{
+			errorMessage = "Alle felter skal udfyldes";
+			isErrorBoxVisible = true;
+		}
+		else if (allAdmins.Any(x => x.Email == AdminModel.Email))
+		{
+			errorMessage = $"Der findes allerede en kunde med email: {AdminModel.Email}";
+			isErrorBoxVisible = true;
+		}
+		else if (allAdmins.Any(x => x.Phonenumber == AdminModel.Phonenumber))
+		{
+			errorMessage = $"Der findes allerede en kunde med telefonnummer: {AdminModel.Phonenumber}";
+			isErrorBoxVisible = true;
+		}
+		else
+		{
+			// Opret RegisterModel ud fra AdminModel
+			var registerModel = new RegisterModel
+				{
+					Username = AdminModel.Username,
+					Name = AdminModel.Name,
+					Password = password, // Brug password fra formularen
+					Email = AdminModel.Email,
+					Role = "Admin",
+					Phonenumber = AdminModel.Phonenumber
+				};
+
+			// Kald API-metoden for at oprette admin
+			ErrorCode = await Service.AddAdmin(registerModel);
+			Console.WriteLine("Admin added: return code: " + ErrorCode);
+			isSuccessBoxVisible = true;
+		}
+	}
+
+
+	private void HandleInvalidSubmit()
+	{
+	}
+
+	private void CloseMessageBox()
+	{
+		isSuccessBoxVisible = false;
+		isErrorBoxVisible = false;
+	}
+}

@@ -1,0 +1,89 @@
+﻿@using ForeningenFumle.Shared.Models;
+@using ForeningenFumle.Client.Services;
+@using ForeningenFumle.Client.Services.AuthServices;
+@inject UserState user
+
+
+@if (Show)
+{
+	<div class="modal-overlay">
+		<div class="modal-content">
+			<h3>Login</h3>
+			<EditForm Model="@loginModel" OnValidSubmit="HandleLogin">
+				<DataAnnotationsValidator />
+				<ValidationSummary />
+
+				<div>
+					<label for="username">Brugernavn:</label>
+					<InputText id="username" @bind-Value="loginModel.Username" />
+				</div>
+				<div class="password">
+					<label for="password">Adgangskode:</label>
+					<InputText id="password" @bind-Value="loginModel.Password" Type="password" />
+				</div>
+
+				<div>
+					<button class="loginbutton" type="submit">Login</button>
+				</div>
+			</EditForm>
+		</div>
+	</div>
+}
+
+@if (!string.IsNullOrEmpty(errorMessage))
+{
+	<div class="error-message">
+		@errorMessage
+	</div>
+}
+
+
+
+@code {
+	[Inject]
+	public NavigationManager Navigation { get; set; }
+
+	[Inject]
+	public IAuthService authService { get; set; }
+
+	[Parameter]
+	public EventCallback OnClose { get; set; }
+
+	[Parameter]
+	public bool Show { get; set; }
+	private LoginModel loginModel = new LoginModel();
+	private List<Person> persons = new List<Person>();
+	private string errorMessage;
+
+	private async Task HandleLogin()
+	{
+		Console.WriteLine("Dette er en test fra et andet sted!");
+		bool success = await authService.LoginAsync(loginModel);
+
+		if (success)
+		{
+			await user.SetUser(loginModel.Username);
+			// Login er godkendt
+			isLoggedIn = true;
+			await OnClose.InvokeAsync(); // Luk popup efter login
+			CloseModal();
+			Navigation.NavigateTo("/"); // Naviger til hovedsiden efter login
+		}
+		else
+		{
+			// Forkert adgangskode
+			errorMessage = "Forkert adgangskode. Prøv igen.";
+		}
+	}
+
+	private bool isLoggedIn = false;
+
+	private void CloseModal()
+	{
+		if (OnClose.HasDelegate)
+		{
+			OnClose.InvokeAsync();
+		}
+	}
+}
+

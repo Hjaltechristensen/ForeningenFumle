@@ -1,0 +1,27 @@
+﻿.container {
+    position: relative;
+    height: 100vh; /* Fylder hele højden af skærmen */
+    width: 100vw; /* Fylder hele bredden af skærmen */
+    display: flex; /* Flexbox for nem centrering */
+    justify-content: center; /* Centrerer vandret */
+    align-items: center; /* Centrerer lodret */
+    padding: 10px; /* Ekstra indre margin */
+    background-color: #f5f5f5; /* Lys baggrundsfarve for kontrast */
+}
+
+.about-container {
+    width: 50%; /* Fylder halvdelen af bredden */
+    max-width: 600px; /* Maksimal bredde for at undgå for stor container */
+    text-align: center; /* Centrerer teksten inden i containeren */
+    background-color: white; /* Hvid baggrund */
+    padding: 20px; /* Indre afstand */
+    border: 1px solid #ccc; /* Lys kantfarve */
+    border-radius: 15px; /* Runde hjørner */
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); /* Let skyggeeffekt */
+}
+
+.about {
+    text-align: center;
+}
+
+

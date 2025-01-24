@@ -1,0 +1,140 @@
+﻿@using ForeningenFumle.Shared.Models;
+@using ForeningenFumle.Client.Services.MemberServices;
+
+<h3>Opret nyt medlem</h3>
+
+<EditForm Model="@MemberModel"
+OnValidSubmit="@HandleValidSubmit"
+OnInvalidSubmit="@HandleInvalidSubmit"
+class="row p-3">
+
+    <DataAnnotationsValidator />
+    <ValidationSummary />
+
+    <div class="col-md-6 mb-3">
+        <label for="Username">Brugernavn</label>
+        <InputText id="Username" @bind-Value="MemberModel.Username" class="form-control" />
+        <ValidationMessage For="@(() => MemberModel.Username)" />
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <label>Password</label>
+        <InputText type="password" @bind-Value="password" class="form-control" />
+    </div>
+
+    <div class="col-md-6 mb-3">
+        <label for="Name">Navn</label>
+        <InputText id="Name" @bind-Value="MemberModel.Name" class="form-control" />
+        <ValidationMessage For="@(() => MemberModel.Name)" />
+    </div>
+    <div class="col-md-6 mb-3">
+        <label for="Email">Email</label>
+        <InputText id="Email" @bind-Value="MemberModel.Email" class="form-control" />
+        <ValidationMessage For="@(() => MemberModel.Email)" />
+    </div>
+    <div class="col-md-6 mb-3">
+        <label for="Phonenumber">Telefon nummer</label>
+        <InputText id="Phonenumber" @bind-Value="MemberModel.Phonenumber" class="form-control" />
+        <ValidationMessage For="@(() => MemberModel.Phonenumber)" />
+    </div>
+
+    <div class="col-12 mb-3">
+        <button type="submit" class="btn btn-primary">Opret nyt medlem</button>
+    </div>
+</EditForm>
+
+@if (errorMessage != null)
+{
+    <p style="color:red">@errorMessage</p>
+}
+
+@if (isSuccessBoxVisible)
+{
+    <div class="message-box">
+        <div class="message-content">
+            <h4>Medlem oprettet</h4>
+            <p>@(MemberModel.Name) blev oprettet korrekt</p>
+            <div class="message-success">
+                <button @onclick="CloseMessageBox">OK</button>
+            </div>
+        </div>
+    </div>
+}
+
+@if (isErrorBoxVisible)
+{
+    <div class="message-box">
+        <div class="message-content">
+            <h4>Fejl</h4>
+            <p>Medlem blev ikke oprettet</p>
+            <p>@errorMessage</p>
+            <div class="message-success">
+                <button @onclick="CloseMessageBox">OK</button>
+            </div>
+        </div>
+    </div>
+}
+
+@code {
+    [Parameter]
+    public Member MemberModel { get; set; } = new Member(); // Initialisering af AdminModel
+    [Inject]
+    public IMemberService Service { get; set; }
+
+    private List<Member> allMembers = new List<Member>();
+    private int ErrorCode { get; set; } = 0;
+    private bool isSuccessBoxVisible = false;
+    private bool isErrorBoxVisible = false;
+    private string? errorMessage;
+    private string password;
+    private string confirmPassword;
+
+    private async Task HandleValidSubmit()
+    {
+        // Validering af input
+        if (MemberModel.Name == null || MemberModel.Phonenumber == null || MemberModel.Email == null || MemberModel.Username == null)
+        {
+            errorMessage = "Alle felter skal udfyldes";
+            isErrorBoxVisible = true;
+        }
+        else if (allMembers.Any(x => x.Email == MemberModel.Email))
+        {
+            errorMessage = $"Der findes allerede et medlem med email: {MemberModel.Email}";
+            isErrorBoxVisible = true;
+        }
+        else if (allMembers.Any(x => x.Phonenumber == MemberModel.Phonenumber))
+        {
+            errorMessage = $"Der findes allerede en medlem med telefonnummer: {MemberModel.Phonenumber}";
+            isErrorBoxVisible = true;
+        }
+        else
+        {
+            // Opret RegisterModel ud fra AdminModel
+            var registerModel = new RegisterModel
+                {
+                    Username = MemberModel.Username,
+                    Name = MemberModel.Name,
+                    Password = password, // Brug password fra formularen
+                    Email = MemberModel.Email,
+                    Role = "Member",
+                    Phonenumber = MemberModel.Phonenumber
+                };
+
+            // Kald API-metoden for at oprette admin
+            ErrorCode = await Service.AddMember(registerModel);
+            Console.WriteLine("Member added: return code: " + ErrorCode);
+            isSuccessBoxVisible = true;
+        }
+    }
+
+
+    private void HandleInvalidSubmit()
+    {
+    }
+
+    private void CloseMessageBox()
+    {
+        isSuccessBoxVisible = false;
+        isErrorBoxVisible = false;
+    }
+}
