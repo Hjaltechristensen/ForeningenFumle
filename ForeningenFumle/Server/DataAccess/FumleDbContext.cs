@@ -29,7 +29,7 @@ namespace ForeningenFumle.Server.DataAccess
 		{
 			modelBuilder.Entity<Registration>()
 				.HasOne(t => t.Person)
-				.WithMany()
+				.WithMany(p => p.Registrations)
 				.HasForeignKey(t => t.PersonId)
 				.OnDelete(DeleteBehavior.Cascade);
 

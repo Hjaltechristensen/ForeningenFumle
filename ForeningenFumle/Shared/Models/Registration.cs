@@ -11,8 +11,8 @@ namespace ForeningenFumle.Shared.Models
 		public int PersonId { get; set; }
 		public int EventId { get; set; }
 		public DateTime RegistrationDate { get; set; } = DateTime.Now;
-		public Person Person { get; set; } = null!;
-		public Event Event { get; set; } = null!;
+		public Person? Person { get; set; } = null!;
+		public Event? Event { get; set; } = null!;
 
 		public Registration()
 		{

@@ -15,6 +15,7 @@ namespace ForeningenFumle.Shared.Models
 		public string? Username { get; set; }
 		public string? PasswordHash { get; set; }
 		public string Role { get; set; }
+		public ICollection<Registration> Registrations { get; set; } = new List<Registration>();
 
 		public Person()
 		{

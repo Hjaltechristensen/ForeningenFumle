@@ -4,6 +4,7 @@ using ForeningenFumle.Server.DataAccess;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 
 #nullable disable
@@ -11,9 +12,11 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ForeningenFumle.Server.Migrations
 {
     [DbContext(typeof(FumleDbContext))]
-    partial class FumleDbContextModelSnapshot : ModelSnapshot
+    [Migration("20250124151241_modelsUpdated8")]
+    partial class modelsUpdated8
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -111,6 +114,9 @@ namespace ForeningenFumle.Server.Migrations
                     b.Property<int>("EventId")
                         .HasColumnType("int");
 
+                    b.Property<int?>("PersonId1")
+                        .HasColumnType("int");
+
                     b.Property<DateTime>("RegistrationDate")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("datetime2")
@@ -119,6 +125,8 @@ namespace ForeningenFumle.Server.Migrations
                     b.HasKey("PersonId", "EventId");
 
                     b.HasIndex("EventId");
+
+                    b.HasIndex("PersonId1");
 
                     b.ToTable("Registrations");
                 });
@@ -152,10 +160,14 @@ namespace ForeningenFumle.Server.Migrations
                         .IsRequired();
 
                     b.HasOne("ForeningenFumle.Shared.Models.Person", "Person")
-                        .WithMany("Registrations")
+                        .WithMany()
                         .HasForeignKey("PersonId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
+
+                    b.HasOne("ForeningenFumle.Shared.Models.Person", null)
+                        .WithMany("Registrations")
+                        .HasForeignKey("PersonId1");
 
                     b.Navigation("Event");
 

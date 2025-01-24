@@ -9,7 +9,6 @@ namespace ForeningenFumle.Shared.Models
 	public class Member : Person
 	{
 		public DateTime MembershipStartDato { get; set; } = DateTime.Now;
-		public ICollection<Registration> Registrations { get; set; } = new List<Registration>();
 
 		public Member()
 		{

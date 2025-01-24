@@ -59,6 +59,7 @@
 	[Inject]
 	public UserState? user { get; set; }
 	private List<Event> events = new List<Event>();
+	private bool attending = false;
 
 	protected override async Task OnInitializedAsync()
 	{
@@ -67,6 +68,14 @@
 
 	private void OnEventClicked()
 	{
-
+		if (attending == false) // Forventer at blive tilmeldt
+		{
+			
+		}
+		else if (attending == true) // Forventer at blive afmeldt
+		{
+			
+		}
+		attending = !attending;
 	}
 };
