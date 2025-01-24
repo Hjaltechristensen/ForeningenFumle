@@ -1,5 +1,6 @@
 ﻿using ForeningenFumle.Server.DataAccess;
 using ForeningenFumle.Shared.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace ForeningenFumle.Server.Repositories.EventRepository
 {
@@ -12,7 +13,7 @@ namespace ForeningenFumle.Server.Repositories.EventRepository
 			try
 			{
 				// Brug OfType<Member>() for at hente kun Members
-				events = db.Events.ToList();
+				events = db.Events.Include(e => e.Registrations).ToList();
 			}
 			catch
 			{

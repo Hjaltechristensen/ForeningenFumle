@@ -7,7 +7,9 @@ namespace ForeningenFumle.Server.Repositories.RegistrationRepository
 		List<Registration> GetAllRegistrations();
 		Registration FindRegistration(int id);
 		void AddRegistration(Registration registration);
-		bool DeleteRegistration(int id);
+		bool DeleteRegistration(int eventId, int personId);
 		bool UpdateRegistration(Registration registration);
+		bool IsUserRegisteredForEvent(int eventId, int personId);
+
 	}
 }

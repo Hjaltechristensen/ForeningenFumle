@@ -1,7 +1,10 @@
-﻿using ForeningenFumle.Server.Repositories.RegistrationRepository;
+﻿using ForeningenFumle.Server.DataAccess;
+using ForeningenFumle.Server.Repositories.EventRepository;
+using ForeningenFumle.Server.Repositories.RegistrationRepository;
 using ForeningenFumle.Shared.Models;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 using System.Net;
 
 namespace ForeningenFumle.Server.Controllers
@@ -12,13 +15,12 @@ namespace ForeningenFumle.Server.Controllers
 	{
 		private readonly IRegistrationRepository repository = new RegistrationRepositoryEF();
 
-		public RegistrationController(IRegistrationRepository registrationRepository)
+		private FumleDbContext _dbContext;
+
+		public RegistrationController(IRegistrationRepository repository, FumleDbContext dbContext)
 		{
-			if (repository == null && registrationRepository != null)
-			{
-				repository = registrationRepository;
-				Console.WriteLine("Repository initialized");
-			}
+			this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
+			_dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 		}
 
 		[HttpGet]
@@ -27,32 +29,36 @@ namespace ForeningenFumle.Server.Controllers
 			return repository.GetAllRegistrations();
 		}
 
-		[HttpDelete("{id:int}")]
-		public StatusCodeResult DeleteRegistration(int id)
+		[HttpDelete("{eventId}/{personId}")]
+		public async Task<IActionResult> RemoveRegistration(int eventId, int personId)
 		{
-			Console.WriteLine("Server: Delete registration called: id = " + id);
+			var registration = await _dbContext.Registrations
+				.FirstOrDefaultAsync(r => r.EventId == eventId && r.PersonId == personId);
 
-			bool deleted = repository.DeleteRegistration(id);
-			if (deleted)
+			if (registration == null)
 			{
-				Console.WriteLine("Server: Registration deleted succces");
-				int code = (int)HttpStatusCode.OK;
-				return new StatusCodeResult(code);
+				return NotFound("Registration not found.");
 			}
-			else
-			{
-				Console.WriteLine("Server: Registration deleted fail - not found");
-				int code = (int)HttpStatusCode.NotFound;
-				return new StatusCodeResult(code);
-			}
+
+			_dbContext.Registrations.Remove(registration);
+			await _dbContext.SaveChangesAsync();
+			return NoContent();
 		}
 
 		[HttpPost]
-		public void AddRegistration(Registration registration)
+		public async Task<IActionResult> AddRegistration([FromBody] Registration registration)
 		{
-			Console.WriteLine("Add registration called: " + registration.ToString());
-			repository.AddRegistration(registration);
+			if (await _dbContext.Registrations
+				.AnyAsync(r => r.EventId == registration.EventId && r.PersonId == registration.PersonId))
+			{
+				return Conflict("User is already registered for this event.");
+			}
+
+			_dbContext.Registrations.Add(registration);
+			await _dbContext.SaveChangesAsync();
+			return CreatedAtAction(nameof(IsUserRegisteredForEvent), new { eventId = registration.EventId, personId = registration.PersonId }, registration);
 		}
+
 
 		[HttpGet("{id:int}")]
 		public Registration FindRegistration(int id)
@@ -77,6 +83,14 @@ namespace ForeningenFumle.Server.Controllers
 				int code = (int)HttpStatusCode.NotFound;
 				return new StatusCodeResult(code);
 			}
+		}
+
+		[HttpGet("{eventId}/{personId}")]
+		public async Task<IActionResult> IsUserRegisteredForEvent(int eventId, int personId)
+		{
+			bool isRegistered = await _dbContext.Registrations.AnyAsync(r => r.EventId == eventId && r.PersonId == personId);
+
+			return Ok(isRegistered);
 		}
 	}
 }

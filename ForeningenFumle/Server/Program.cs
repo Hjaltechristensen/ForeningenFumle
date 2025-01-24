@@ -1,6 +1,8 @@
+using ForeningenFumle.Client.Services.RegistrationServices;
 using ForeningenFumle.Server.DataAccess;
 using ForeningenFumle.Server.Repositories.AdminRepository;
 using ForeningenFumle.Server.Repositories.EventRepository;
+using ForeningenFumle.Server.Repositories.RegistrationRepository;
 using ForeningenFumle.Server.Services;
 using ForeningenFumle.Shared.Models;
 using Microsoft.AspNetCore.Authentication.Cookies;
@@ -15,6 +17,7 @@ builder.Services.AddRazorPages();
 builder.Services.AddScoped<IPasswordHasher<Person>, PasswordHasher<Person>>();
 builder.Services.AddScoped<IAdminRepository, AdminRepositoryEF>();
 builder.Services.AddScoped<IEventRepository, EventRepositoryEF>();
+builder.Services.AddScoped<IRegistrationRepository, RegistrationRepositoryEF>();
 
 builder.Services.AddScoped<AuthenticationService>();
 

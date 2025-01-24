@@ -1,8 +1,5 @@
-﻿using ForeningenFumle.Client.Pages;
-using ForeningenFumle.Shared.Models;
-using System.Net.Http;
+﻿using ForeningenFumle.Shared.Models;
 using System.Net.Http.Json;
-using static System.Net.WebRequestMethods;
 
 namespace ForeningenFumle.Client.Services.AdminServices
 {

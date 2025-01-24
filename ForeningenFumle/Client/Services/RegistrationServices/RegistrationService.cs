@@ -6,37 +6,40 @@ namespace ForeningenFumle.Client.Services.RegistrationServices
 	public class RegistrationService : IRegistrationService
 	{
 		private readonly HttpClient httpClient;
-
 		public RegistrationService(HttpClient httpClient)
 		{
 			this.httpClient = httpClient;
 		}
 		public Task<Registration[]?> GetAllRegistration()
 		{
-			var result = httpClient.GetFromJsonAsync<Registration[]>("api/registrationapi");
+			var url = "api/registrationapi/";
+			var result = httpClient.GetFromJsonAsync<Registration[]>("https://localhost:7242/" + url);
 
 			return result;
 		}
 
 		public async Task<Registration?> GetRegistration(int id)
 		{
-			var result = await httpClient.GetFromJsonAsync<Registration>("api/registrationapi/" + id);
+			var url = "api/registrationapi/" + id;
+			var result = await httpClient.GetFromJsonAsync<Registration>("https://localhost:7242/" + url);
 
 			return result;
 		}
 
 		public async Task<int> AddRegistration(Registration registration)
 		{
-			var response = await httpClient.PostAsJsonAsync("api/registrationapi", registration);
+			var url = "api/registrationapi/";
+			var response = await httpClient.PostAsJsonAsync("https://localhost:7242/" + url, registration);
 
 			var responseStatusCode = response.StatusCode;
 
 			return (int)responseStatusCode;
 		}
 
-		public async Task<int> DeleteRegistration(int id)
+		public async Task<int> DeleteRegistration(int eventId, int personId)
 		{
-			var response = await httpClient.DeleteAsync("api/registrationapi/" + id);
+			var url = $"api/registrationapi/{eventId}/{personId}";
+			var response = await httpClient.DeleteAsync("https://localhost:7242/" + url);
 
 			var responseStatusCode = response.StatusCode;
 
@@ -45,11 +48,20 @@ namespace ForeningenFumle.Client.Services.RegistrationServices
 
 		public async Task<int> UpdateRegistration(Registration registration)
 		{
-			var response = await httpClient.PatchAsJsonAsync("api/registrationapi", registration);
+			var url = "api/registrationapi/";
+			var response = await httpClient.PatchAsJsonAsync("https://localhost:7242/" + url, registration);
 
 			var responseStatusCode = response.StatusCode;
 
 			return (int)responseStatusCode;
 		}
+
+		public async Task<bool> IsUserRegisteredForEvent(int eventId, int personId)
+		{
+			var url = $"api/registrationapi/{eventId}/{personId}";
+			var response = await httpClient.GetFromJsonAsync<bool>("https://localhost:7242/" + url);
+			return response;
+		}
+
 	}
 }

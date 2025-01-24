@@ -27,6 +27,10 @@ namespace ForeningenFumle.Server.DataAccess
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
+			// Eksempel på komposit primærnøgle i Tilmelding
+			modelBuilder.Entity<Registration>()
+				.HasKey(t => new { t.PersonId, t.EventId }); // Kombiner MedlemId og EventId som primærnøgle
+
 			modelBuilder.Entity<Registration>()
 				.HasOne(t => t.Person)
 				.WithMany(p => p.Registrations)
@@ -51,16 +55,6 @@ namespace ForeningenFumle.Server.DataAccess
 			modelBuilder.Entity<Person>()
 				.HasIndex(p => p.Username)
 				.IsUnique();
-
-
-			// Eksempel på komposit primærnøgle i Tilmelding
-			modelBuilder.Entity<Registration>()
-				.HasKey(t => new { t.PersonId, t.EventId }); // Kombiner MedlemId og EventId som primærnøgle
-
-			// Konfiguration for standard dato (TilmeldingsDato default value)
-			modelBuilder.Entity<Registration>()
-				.Property(t => t.RegistrationDate)
-				.HasDefaultValueSql("GETDATE()"); // SQL-standardværdi for dato
 
 			modelBuilder.Entity<Person>()
 				.HasDiscriminator<string>("PersonType") // Tilføj kolonne 'PersonType'

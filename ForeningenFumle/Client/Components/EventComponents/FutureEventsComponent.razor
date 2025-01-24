@@ -22,7 +22,7 @@
 			<!-- Event liste for hver måned -->
 			@foreach (var item in monthGroup)
 			{
-				<button class="event-button" @onclick="OnEventClicked">
+				<button class="event-button" @onclick=" () => OnEventClicked(item)">
 					<div class="event-list">
 						<div class="event">
 							<div class="event-header">
@@ -57,25 +57,48 @@
 	[Inject]
 	public IEventService Service { get; set; }
 	[Inject]
+	public IRegistrationService registrationService { get; set; }
+	[Inject]
 	public UserState? user { get; set; }
 	private List<Event> events = new List<Event>();
-	private bool attending = false;
+
+	private bool attending;
+
 
 	protected override async Task OnInitializedAsync()
 	{
 		events = (await Service.GetAllEvent()).ToList();
 	}
 
-	private void OnEventClicked()
+	private async Task OnEventClicked(Event eEvent)
 	{
-		if (attending == false) // Forventer at blive tilmeldt
+		if (user == null || (user.Admin == null && user.Member == null))
+			return;
+
+		int personId = user.Admin?.Id ?? user.Member?.Id ?? 0; // Hent PersonId fra Admin eller Member
+		if (personId == 0)
+			return;
+
+		bool attending = await registrationService.IsUserRegisteredForEvent(eEvent.EventId, personId); // skal sættes op til at tjekke om registration er der og returnere en bool
+
+		if (attending)
 		{
-			
+			// Afmeld brugeren fra eventet
+			await registrationService.DeleteRegistration(eEvent.EventId, personId); 
 		}
-		else if (attending == true) // Forventer at blive afmeldt
+		else
 		{
-			
+			// Tilmeld brugeren til eventet
+			Registration registration = new Registration
+				{
+					EventId = eEvent.EventId,
+					PersonId = personId
+				};
+			await registrationService.AddRegistration(registration);
 		}
-		attending = !attending;
+
+		// Opdater UI eller genindlæs data
+		events = (await Service.GetAllEvent()).ToList();
 	}
+
 };

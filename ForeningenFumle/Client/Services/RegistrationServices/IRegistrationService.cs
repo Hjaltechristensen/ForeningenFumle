@@ -10,8 +10,11 @@ namespace ForeningenFumle.Client.Services.RegistrationServices
 
 		Task<int> AddRegistration(Registration registration);
 
-		Task<int> DeleteRegistration(int id);
+		Task<int> DeleteRegistration(int eventId, int PersonId);
 
 		Task<int> UpdateRegistration(Registration registration);
+
+		Task<bool> IsUserRegisteredForEvent(int eventId, int personId);
+
 	}
 }
