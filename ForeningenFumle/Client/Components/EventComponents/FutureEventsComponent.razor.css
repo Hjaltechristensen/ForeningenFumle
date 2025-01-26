@@ -9,7 +9,12 @@
 }
 
 .event {
+    position: relative; /* Sørger for, at billedets absolute position relaterer sig til denne boks */
+    padding: 20px; /* Tilføjer lidt afstand til indholdet */
+    border: 1px solid #ccc;
     margin-bottom: 10px;
+    border-radius: 10px; /* Afrunder kanterne */
+    box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
 }
 
 .event-header {
@@ -102,4 +107,18 @@ hr {
 .event-button:hover {
     border: solid 1px;
     border-radius: 8px;
+}
+
+.selection-circle {
+    position: absolute; /* Placeringen bliver relativ til event-boksen */
+    top: 10px; /* Afstand fra toppen */
+    right: 10px; /* Afstand fra højre */
+    width: 30px; /* Billedets bredde */
+    height: 30px; /* Billedets højde */
+}
+
+.selection-image {
+    width: 100%; /* Sørger for, at billedet fylder hele containeren */
+    height: 100%;
+    object-fit: cover;
 }

@@ -14,6 +14,24 @@ namespace ForeningenFumle.Server.Repositories.RegistrationRepository
 		{
 			throw new NotImplementedException();
 		}
+
+		public List<Registration> GetRegistrationsByPersonId(int personId)
+		{
+			var db = new FumleDbContext();
+			List<Registration> registrations;
+			try
+			{
+				registrations = db.Registrations
+				.Where(r => r.PersonId == personId)
+				.ToList();
+			}
+			catch
+			{
+				registrations = new List<Registration>();
+			}
+
+			return registrations;
+		}
 		public void AddRegistration(Registration registration)
 		{
 			try

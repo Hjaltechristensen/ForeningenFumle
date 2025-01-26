@@ -29,6 +29,12 @@ namespace ForeningenFumle.Server.Controllers
 			return repository.GetAllRegistrations();
 		}
 
+		[HttpGet("{personId}")]
+		public List<Registration> GetRegistrationsByPersonId(int personId)
+		{
+			return repository.GetRegistrationsByPersonId(personId);
+		}
+
 		[HttpDelete("{eventId}/{personId}")]
 		public async Task<IActionResult> RemoveRegistration(int eventId, int personId)
 		{
@@ -60,12 +66,12 @@ namespace ForeningenFumle.Server.Controllers
 		}
 
 
-		[HttpGet("{id:int}")]
-		public Registration FindRegistration(int id)
-		{
-			var result = repository.FindRegistration(id);
-			return result;
-		}
+		//[HttpGet("{id:int}")]
+		//public Registration FindRegistration(int id)
+		//{
+		//	var result = repository.FindRegistration(id);
+		//	return result;
+		//}
 
 		[HttpPatch]
 		public StatusCodeResult UpdateRegistration(Registration registration)

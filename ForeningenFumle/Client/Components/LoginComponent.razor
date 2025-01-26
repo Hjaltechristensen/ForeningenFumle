@@ -57,7 +57,6 @@
 
 	private async Task HandleLogin()
 	{
-		Console.WriteLine("Dette er en test fra et andet sted!");
 		bool success = await authService.LoginAsync(loginModel);
 
 		if (success)

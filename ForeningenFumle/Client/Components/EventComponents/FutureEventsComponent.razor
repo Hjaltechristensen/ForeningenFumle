@@ -5,10 +5,14 @@
 <div class="scrollable-box">
 	@if (events != null && events.Any())
 	{
-		var groupedEvents = events
+		var filteredEvents = events
+		.Where(e => e.TimeAndDate.Date >= DateTime.Now.Date) // Filtrerer events med dagsdato og kommende
+		.ToList();
+
+		var groupedEvents = filteredEvents
 		.GroupBy(e => e.TimeAndDate.ToString("yyyy-MM"))  // Grupperer efter år og måned
 		.OrderBy(g => g.Key); // Sorterer grupperne efter år og måned
-
+		<a style="align-content">Kommende events</a>
 		foreach (var monthGroup in groupedEvents)
 		{
 			var monthName = DateTime.Parse(monthGroup.Key).ToString("MMM yyyy"); // Formaterer måneden som "Feb. 2025"
@@ -20,14 +24,27 @@
 			</div>
 
 			<!-- Event liste for hver måned -->
-			@foreach (var item in monthGroup)
+			@foreach (var item in monthGroup.OrderBy(e => e.TimeAndDate.Day))
 			{
 				<button class="event-button" @onclick=" () => OnEventClicked(item)">
 					<div class="event-list">
 						<div class="event">
+							<div class="selection-circle">
+								@if (eventRegistrationStatus.ContainsKey(item.EventId) && eventRegistrationStatus[item.EventId])
+								{
+									<!-- Grøn cirkel med flueben -->
+									<img src="flueben.png" alt="Registered" class="selection-image" />
+								}
+								else
+								{
+									<!-- Tom cirkel -->
+									<img src="tomflueben.png" alt="Not Registered" class="selection-image" />
+								}
+							</div>
 							<div class="event-header">
 								<span class="event-date">@item.TimeAndDate.Day</span>
 								<span class="event-day">@item.TimeAndDate.DayOfWeek</span>
+
 							</div>
 							<div class="event-details">
 								<p class="event-title">@item.Title</p>
@@ -63,11 +80,51 @@
 	private List<Event> events = new List<Event>();
 
 	private bool attending;
+	private Dictionary<int, bool> eventRegistrationStatus = new();
+	private bool isUserLoggedIn => user.Admin != null || user.Member != null;
+
 
 
 	protected override async Task OnInitializedAsync()
 	{
 		events = (await Service.GetAllEvent()).ToList();
+		user.OnChange += HandleUserStateChanged;
+	}
+
+	private async void HandleUserStateChanged()
+	{
+		if (isUserLoggedIn)
+		{
+			int personId = user.Admin?.Id ?? user.Member?.Id ?? 0;
+			if (personId != 0)
+			{
+				try
+				{
+					// Hent alle registreringer for denne bruger
+					var userRegistrations = await registrationService.GetRegistrationsByPersonId(personId);
+
+					// Opdater eventRegistrationStatus baseret på registreringerne
+					foreach (var registration in userRegistrations)
+					{
+						eventRegistrationStatus[registration.EventId] = true;
+					}
+
+					// Genindlæs UI'et, når registreringerne er opdateret
+					StateHasChanged();
+				}
+				catch (Exception ex)
+				{
+					Console.WriteLine($"Fejl ved opdatering af registreringer: {ex.Message}");
+					// Håndter eventuelle fejl her, f.eks. vis en fejlmeddelelse til brugeren
+				}
+			}
+		}
+	}
+
+	// Husk at afmelde eventet, når komponenten fjernes for at undgå memory leaks
+	public void Dispose()
+	{
+		user.OnChange -= HandleUserStateChanged;
 	}
 
 	private async Task OnEventClicked(Event eEvent)
@@ -84,7 +141,8 @@
 		if (attending)
 		{
 			// Afmeld brugeren fra eventet
-			await registrationService.DeleteRegistration(eEvent.EventId, personId); 
+			await registrationService.DeleteRegistration(eEvent.EventId, personId);
+			eventRegistrationStatus[eEvent.EventId] = false; // Opdater status
 		}
 		else
 		{
@@ -95,10 +153,11 @@
 					PersonId = personId
 				};
 			await registrationService.AddRegistration(registration);
+			eventRegistrationStatus[eEvent.EventId] = true; // Opdater status
+
 		}
 
 		// Opdater UI eller genindlæs data
 		events = (await Service.GetAllEvent()).ToList();
 	}
-
-};
+}

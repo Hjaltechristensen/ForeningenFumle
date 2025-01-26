@@ -53,9 +53,11 @@ namespace ForeningenFumle.Server.Services
 				var member = new Member
 				{
 					Username = registerModel.Username,
+					Name = registerModel.Name,
 					Email = registerModel.Email,
 					PasswordHash = _passwordHasher.HashPassword(null, registerModel.Password),
-					Role = registerModel.Role
+					Role = registerModel.Role,
+					Phonenumber = registerModel.Phonenumber
 				};
 				_context.Members.Add(member);
 			}

@@ -1,4 +1,5 @@
 ﻿using ForeningenFumle.Shared.Models;
+using System.Net.Http;
 using System.Net.Http.Json;
 
 namespace ForeningenFumle.Client.Services.RegistrationServices
@@ -18,12 +19,10 @@ namespace ForeningenFumle.Client.Services.RegistrationServices
 			return result;
 		}
 
-		public async Task<Registration?> GetRegistration(int id)
+		public async Task<List<Registration>?> GetRegistrationsByPersonId(int personId)
 		{
-			var url = "api/registrationapi/" + id;
-			var result = await httpClient.GetFromJsonAsync<Registration>("https://localhost:7242/" + url);
-
-			return result;
+			var url = $"api/registrationapi/{personId}";
+			return await httpClient.GetFromJsonAsync<List<Registration>>("https://localhost:7242/" + url);
 		}
 
 		public async Task<int> AddRegistration(Registration registration)
