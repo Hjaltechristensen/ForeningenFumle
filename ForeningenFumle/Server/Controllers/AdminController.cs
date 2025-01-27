@@ -114,24 +114,24 @@ namespace ForeningenFumle.Server.Controllers
 		}
 
 
-		[HttpPost("register")]
-		public async Task<IActionResult> Register([FromBody] RegisterModel registerModel)
-		{
-			if (!ModelState.IsValid)
-			{
-				return BadRequest(ModelState); // Returner fejl, hvis validering fejler
-			}
+		//[HttpPost("register")]
+		//public async Task<IActionResult> Register([FromBody] RegisterModel registerModel)
+		//{
+		//	if (!ModelState.IsValid)
+		//	{
+		//		return BadRequest(ModelState); // Returner fejl, hvis validering fejler
+		//	}
 
-			try
-			{
-				await _authenticationService.RegisterAsync(registerModel);
-				return Ok("Bruger registreret.");
-			}
-			catch (Exception ex)
-			{
-				return BadRequest(ex.Message);
-			}
-		}
+		//	try
+		//	{
+		//		await _authenticationService.RegisterAsync(registerModel);
+		//		return Ok("Bruger registreret.");
+		//	}
+		//	catch (Exception ex)
+		//	{
+		//		return BadRequest(ex.Message);
+		//	}
+		//}
 
 		[HttpGet("{username}")]
 		public Admin FindAdmin(string username)

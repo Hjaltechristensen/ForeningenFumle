@@ -1,0 +1,225 @@
+﻿@using ForeningenFumle.Shared.Models;
+
+@if (readyForEditPassword)
+{
+	<div>
+		<h5>Ændre adgangskode</h5>
+		<hr />
+		<label for="oldPassword">Gamle adgangskode</label>
+		<input type="password" id="oldPassword" @bind="oldPassword" />
+		<hr />
+		<label for="newPassword">Nye adgangskode</label>
+		<input type="password" id="newPassword" @bind="newPassword" />
+		<hr />
+		<label for="confirmPassword">Gentag nye adgangskode</label>
+		<input type="password" id="confirmPassword" @bind="confirmPassword" />
+		<hr />
+		<div>
+			<button @onclick="CancelPasswordChange">Annuller</button>
+			<button @onclick="ChangePassword">Ændre adgangskode</button>
+		</div>
+	</div>
+}
+else if (readyForEdit)
+{
+	@if (admin.Username == null && member.Username != null)
+	{
+		<div>
+			<h5>Navn</h5>
+			<span><input @bind="member.Name" /></span>
+			<hr />
+			<h5>Email</h5>
+			<span><input @bind="member.Email" /></span>
+			<hr />
+			<h5>Telefonnummer</h5>
+			<span><input @bind="member.Phonenumber" /></span>
+			<hr />
+			<h5>Registreringsdato</h5>
+			<span>@member.MembershipStartDato.ToString("D")</span>
+		</div>
+	}
+	else if (member.Username == null && admin.Username != null)
+	{
+		<div>
+			<h5>Navn</h5>
+			<span><input @bind="admin.Name" /></span>
+			<hr>
+			<h5>Email</h5>
+			<span><input @bind="admin.Email" /></span>
+			<hr />
+			<h5>Telfonnummer</h5>
+			<span><input @bind="admin.Phonenumber" /></span>
+			<hr />
+			<h5>Registreringsdato</h5>
+			<span>@admin.AdminAssignmentDate.ToString("D")</span>
+		</div>
+	}
+	<hr />
+	<div>
+		<span><button @onclick="CancelEdit">Annuller</button></span>
+		<span><button @onclick="SaveChanges">Gem</button></span>
+	</div>
+}
+else
+{
+	@if (admin.Username == null && member.Username != null) // Html for member
+	{
+		<div>
+			<h5>Navn</h5>
+			<span>@member.Name</span>
+			<hr />
+			<h5>Email</h5>
+			<span>@member.Email</span>
+			<hr />
+			<h5>Telefonnummer</h5>
+			<span>@member.Phonenumber</span>
+			<hr />
+			<h5>Registreringsdato</h5>
+			<span>@member.MembershipStartDato.ToString("D")</span>
+		</div>
+	}
+	else if (member.Username == null && admin.Username != null) // Html for admin
+	{
+		<div>
+			<h5>Navn</h5>
+			<span>@admin.Name</span>
+			<hr />
+			<h5>Email</h5>
+			<span>@admin.Email</span>
+			<hr />
+			<h5>Telefonnummer</h5>
+			<span>@admin.Phonenumber</span>
+			<hr />
+			<h5>Registreringsdato</h5>
+			<span>@admin.AdminAssignmentDate.ToString("D")</span>
+		</div>
+	}
+	<hr />
+	<div>
+		<button @onclick="EditUser">Rediger profil</button>
+	</div>
+}
+
+@code {
+	[Inject]
+	public UserState? user { get; set; }
+
+	[Inject]
+	public IAdminService? adminService { get; set; }
+
+	[Inject]
+	public IMemberService? memberService { get; set; }
+
+	private Admin admin = new();
+	private Member member = new();
+	private List<Admin> allAdmins = new();
+	private List<Member> allMembers = new();
+	private bool readyForEdit = false;
+	private bool readyForEditPassword = false;
+
+	private string oldPassword = string.Empty;
+	private string newPassword = string.Empty;
+	private string confirmPassword = string.Empty;
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		if (user?.Admin != null)
+		{
+			admin = await adminService.GetAdmin(user.Admin.Username);
+			if (admin != null)
+			{
+				await user.SetUser(admin.Username);
+			}
+		}
+		else if (user?.Member != null)
+		{
+			member = await memberService.GetMember(user.Member.Username);
+			if (member != null)
+			{
+				await user.SetUser(member.Username);
+			}
+		}
+		await GetAllMembersAndAdmins();
+	}
+
+	private void EditUser()
+	{
+		readyForEdit = true;
+	}
+	private void CancelEdit()
+	{
+		readyForEdit = false;
+	}
+
+	private async Task SaveChanges()
+	{
+		if (user?.Admin != null)
+		{
+			// Opdater admin
+			if (await ValidateUsername(admin.Username, isAdmin: true))
+			{
+				await adminService.UpdateAdmin(admin);
+				Console.WriteLine("Admin-oplysninger er opdateret!");
+			}
+			else
+			{
+				Console.WriteLine("Brugernavnet er allerede i brug af en anden admin.");
+			}
+		}
+		else if (user?.Member != null)
+		{
+			// Opdater member
+			if (await ValidateUsername(member.Username, isAdmin: false))
+			{
+				await memberService.UpdateMember(member);
+				Console.WriteLine("Medlemsoplysninger er opdateret!");
+			}
+			else
+			{
+				Console.WriteLine("Brugernavnet er allerede i brug af et andet medlem.");
+			}
+		}
+		readyForEdit = false;
+	}
+
+	private void ShowPasswordChange()
+	{
+		readyForEditPassword = true;
+	}
+
+	private void CancelPasswordChange()
+	{
+		readyForEditPassword = false;
+		oldPassword = string.Empty;
+		newPassword = string.Empty;
+		confirmPassword = string.Empty;
+	}
+
+	private async Task ChangePassword()
+	{
+
+
+		CancelPasswordChange();
+	}
+
+	private async Task<bool> ValidateUsername(string username, bool isAdmin)
+	{
+		if (isAdmin)
+		{
+			// Kontrollér, om brugernavnet findes blandt andre admins
+			return !allAdmins.Any(a => a.Username == username && a.Id != admin.Id);
+		}
+		else
+		{
+			// Kontrollér, om brugernavnet findes blandt andre medlemmer
+			return !allMembers.Any(m => m.Username == username && m.Id != member.Id);
+		}
+	}
+
+	private async Task GetAllMembersAndAdmins()
+	{
+		allAdmins = (await adminService.GetAllAdmins()).ToList();
+		allMembers = (await memberService.GetAllMembers()).ToList();
+	}
+}
