@@ -6,11 +6,12 @@
     <ServiceWorkerAssetsManifest>service-worker-assets.js</ServiceWorkerAssetsManifest>
   </PropertyGroup>
   <ItemGroup>
+    <PackageReference Include="Blazored.LocalStorage" Version="4.5.0" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly" Version="8.0.12" />
     <PackageReference Include="Microsoft.AspNetCore.Components.WebAssembly.DevServer" Version="8.0.12" PrivateAssets="all" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="8.0.1" />
     <PackageReference Include="Radzen.Blazor" Version="5.7.10" />
-    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.6.0-preview-03" />
+    <PackageReference Include="System.Linq.Dynamic.Core" Version="1.6.0.1" />
     <PackageReference Include="System.Private.Uri" Version="4.3.2" />
   </ItemGroup>
   <ItemGroup>

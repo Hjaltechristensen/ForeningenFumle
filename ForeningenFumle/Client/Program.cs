@@ -7,6 +7,8 @@ using ForeningenFumle.Client.Services.RegistrationServices;
 using ForeningenFumle.Client.Shared;
 using Microsoft.AspNetCore.Components.Web;
 using Microsoft.AspNetCore.Components.WebAssembly.Hosting;
+using Blazored.LocalStorage;
+using ForeningenFumle.Client.Services;
 
 var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
@@ -44,6 +46,8 @@ builder.Services.AddScoped<IAdminService, AdminService>();
 builder.Services.AddScoped<IMemberService, MemberService>();
 builder.Services.AddScoped<IEventService, EventService>();
 builder.Services.AddScoped<IRegistrationService, RegistrationService>();
+builder.Services.AddBlazoredLocalStorage();
+builder.Services.AddScoped<LogoutTimeService>();
 
 
 

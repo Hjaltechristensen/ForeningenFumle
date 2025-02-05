@@ -56,10 +56,6 @@ namespace ForeningenFumle.Client.Shared
 			{
 				Console.WriteLine($"Fejl ved login: {ex.Message}");
 			}
-			// Tjek herefter, om det er et medlem
-			
-			
-
 			// Ingen bruger fundet
 			Admin = null;
 			Member = null;

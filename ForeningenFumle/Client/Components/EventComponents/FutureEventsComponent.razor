@@ -12,7 +12,7 @@
 		var groupedEvents = filteredEvents
 		.GroupBy(e => e.TimeAndDate.ToString("yyyy-MM"))  // Grupperer efter år og måned
 		.OrderBy(g => g.Key); // Sorterer grupperne efter år og måned
-		<a style="align-content">Kommende events</a>
+		<p class="overskrift">Kommende events</p>
 		foreach (var monthGroup in groupedEvents)
 		{
 			var monthName = DateTime.Parse(monthGroup.Key).ToString("MMM yyyy"); // Formaterer måneden som "Feb. 2025"

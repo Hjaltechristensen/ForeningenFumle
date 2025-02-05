@@ -13,13 +13,11 @@ namespace ForeningenFumle.Server.Controllers
 	public class AuthController : ControllerBase
 	{
 		private readonly AuthenticationService _authenticationService;
-		private readonly RegistrationService _registrationService;
 		private FumleDbContext _dbContext;
 
 		public AuthController(AuthenticationService authenticationService, RegistrationService registrationService, FumleDbContext dbContext)
 		{
 			_authenticationService = authenticationService;
-			_registrationService = registrationService;
 			_dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 		}
 

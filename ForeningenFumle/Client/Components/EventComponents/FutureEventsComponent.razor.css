@@ -122,3 +122,9 @@ hr {
     height: 100%;
     object-fit: cover;
 }
+
+.overskrift {
+    text-align: center;
+    font-weight: bold;
+    font-size: 22px;
+}

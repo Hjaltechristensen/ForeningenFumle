@@ -1,0 +1,29 @@
+﻿@using ForeningenFumle.Client.Shared
+@inject NavigationManager Navigation
+@inject Blazored.LocalStorage.ILocalStorageService localStore;
+
+@page "/logout"
+
+@code {
+	protected override void OnInitialized()
+	{
+		base.OnInitialized();
+		// UpdateLocalStorage(false);
+		MainLayout.Logout();
+        Navigation.NavigateTo("/"); // Navigerer til forsiden
+    }
+
+	// public async void UpdateLocalStorage(bool loggedIn)
+	// {
+	// 	string trueFalse = string.Empty;
+	// 	if (loggedIn)
+	// 	{
+	// 		trueFalse = "true";
+	// 	}
+	// 	else
+	// 	{
+	// 		trueFalse = "false";
+	// 	}
+	// 	await localStore.SetItemAsync("LoggedIn", trueFalse);
+	// }
+}

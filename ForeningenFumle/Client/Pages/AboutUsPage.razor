@@ -1,4 +1,5 @@
-﻿@page "/about"
+﻿@using ForeningenFumle.Client.Services;
+@page "/about"
 
 
 <div class="container">
@@ -30,6 +31,12 @@
 	</div>
 </div>
 @code {
-
+	// [Inject]
+	// LogoutTimeService logoutTimeService { get; set; }
+	// protected override async Task OnInitializedAsync()
+	// {
+	// 	logoutTimeService.CheckLogoutTime();
+	// }
 }
+
 

@@ -36,7 +36,7 @@
 			<li class="dropdown">
 				<a href="/profile" class="user-info">Velkommen, @(user?.Admin?.Username ?? user?.Member?.Username)</a>
 				<ul class="dropdown-menu">
-					<li><a >Log ud</a></li>
+					<li><a href="/logout">Log ud</a></li>
 				</ul>
 			</li>
 		</ul>
@@ -61,10 +61,5 @@
 		{
 			user.OnChange -= StateHasChanged;
 		}
-	}
-
-	public static void LogOut()
-	{
-		MainLayout.Logout();
 	}
 }
