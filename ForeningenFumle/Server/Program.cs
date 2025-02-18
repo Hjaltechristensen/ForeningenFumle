@@ -1,3 +1,4 @@
+Ôªøusing ForeningenFumle.Client.Services;
 using ForeningenFumle.Client.Services.RegistrationServices;
 using ForeningenFumle.Server.DataAccess;
 using ForeningenFumle.Server.Repositories.AdminRepository;
@@ -21,6 +22,15 @@ builder.Services.AddScoped<IRegistrationRepository, RegistrationRepositoryEF>();
 
 builder.Services.AddScoped<AuthenticationService>();
 
+//builder.Services.AddCors(options =>
+//{
+//	options.AddPolicy("AllowAllOrigins", policy =>
+//	{
+//		policy.WithOrigins("https://foreningenfumleserver.azurewebsites.net") // Erstat med din Blazor-klients URL
+//			  .AllowAnyMethod()
+//			  .AllowAnyHeader();
+//	});
+//});
 
 // Authentication Configuration
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -30,7 +40,17 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 		options.LogoutPath = "/logout";
 	});
 
-// Tilf¯j DbContext og konfigurÈr databaseforbindelsen
+//builder.Services.AddCors(options =>
+//{
+//	options.AddPolicy("AllowBlazorClient", policy =>
+//	{
+//		policy.WithOrigins($"{GetUrl.ReferenceEquals}") // Skift til din Blazor URL
+//			  .AllowAnyMethod()
+//			  .AllowAnyHeader();
+//	});
+//});
+
+// Tilf√∏j DbContext og konfigur√©r databaseforbindelsen
 builder.Services.AddDbContext<FumleDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
 
@@ -46,7 +66,7 @@ else
 	app.UseExceptionHandler("/Error");
 	app.UseHsts();
 }
-
+//app.UseCors("AllowAllOrigins");
 app.UseHttpsRedirection();
 
 // Authentication and Authorization
@@ -57,6 +77,7 @@ app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
+//app.UseCors("AllowBlazorClient"); // Brug samme navn som i AddCors
 
 app.MapRazorPages();
 app.MapControllers();

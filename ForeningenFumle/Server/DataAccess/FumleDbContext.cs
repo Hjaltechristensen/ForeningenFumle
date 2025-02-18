@@ -21,9 +21,11 @@ namespace ForeningenFumle.Server.DataAccess
 			
 		}
 
-		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-			=> optionsBuilder.UseSqlServer("Server=LAPTOP-KOEHKSOQ;Database=ForeningenFumle;Trusted_Connection=True;TrustServerCertificate=True;");
+		//protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+		//	=> optionsBuilder.UseSqlServer("Server=LAPTOP-KOEHKSOQ;Database=ForeningenFumle;Trusted_Connection=True;TrustServerCertificate=True;");
 
+		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+			=> optionsBuilder.UseSqlServer("Server=tcp:myfreesqldbserverfumle.database.windows.net,1433;Initial Catalog=myFreeDB;Persist Security Info=False;User ID=Hjalte;Password=13Qe35Dg35^Cb;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -45,6 +47,10 @@ namespace ForeningenFumle.Server.DataAccess
 				.OnDelete(DeleteBehavior.Restrict);     // Restrict: Event kan ikke slettes, hvis der findes tilmeldinger
 
 			modelBuilder.Entity<Person>()
+				.Property(c => c.PersonId)
+				.ValueGeneratedOnAdd();
+
+			modelBuilder.Entity<Person>()
 				.HasIndex(p => p.Email)
 				.IsUnique();
 
@@ -56,7 +62,7 @@ namespace ForeningenFumle.Server.DataAccess
 				.HasIndex(p => p.Username)
 				.IsUnique();
 
-			modelBuilder.Entity<Person>()
+				modelBuilder.Entity<Person>()
 				.HasDiscriminator<string>("PersonType") // Tilføj kolonne 'PersonType'
 				.HasValue<Person>("Person")            // Basisværdien
 				.HasValue<Member>("Medlem")            // Værdi for Medlem

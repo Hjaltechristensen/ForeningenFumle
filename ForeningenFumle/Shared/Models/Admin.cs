@@ -16,7 +16,7 @@ namespace ForeningenFumle.Shared.Models
 		}
 		public Admin(int id)
 		{
-			Id = id;
+			PersonId = id;
 		}
 	}
 }

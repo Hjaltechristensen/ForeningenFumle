@@ -16,7 +16,7 @@ namespace ForeningenFumle.Client.Services.MemberServices
 		public Task<Member[]?> GetAllMembers()
 		{
 			var url = "api/memberapi/";
-			var result = httpClient.GetFromJsonAsync<Member[]>("https://localhost:7242/" + url);
+			var result = httpClient.GetFromJsonAsync<Member[]>($"{GetUrl.ReturnUrlString()}" + url);
 
 			return result;
 		}
@@ -24,8 +24,8 @@ namespace ForeningenFumle.Client.Services.MemberServices
 		public async Task<Member?> GetMember(string username)
 		{
 			var url = "api/memberapi/" + username;
-			Console.WriteLine($"Calling API: {"https://localhost:7242/"}{url}");
-			var result = await httpClient.GetFromJsonAsync<Member>("https://localhost:7242/" + url);
+			Console.WriteLine($"Calling API: {GetUrl.ReturnUrlString()}{url}");
+			var result = await httpClient.GetFromJsonAsync<Member>($"{GetUrl.ReturnUrlString()}" + url);
 
 			return result;
 		}
@@ -33,7 +33,7 @@ namespace ForeningenFumle.Client.Services.MemberServices
 		public async Task<int> AddMember(RegisterModel member)
 		{
 			var url = "api/memberapi/";
-			var response = await httpClient.PostAsJsonAsync("https://localhost:7242/" + url, member);
+			var response = await httpClient.PostAsJsonAsync($"{GetUrl.ReturnUrlString()}" + url, member);
 			if (response.IsSuccessStatusCode)
 			{
 				Console.WriteLine("Member added successfully.");
@@ -51,7 +51,7 @@ namespace ForeningenFumle.Client.Services.MemberServices
 		public async Task<int> DeleteMember(int id)
 		{
 			var url = "api/memberapi/";
-			var response = await httpClient.DeleteAsync("https://localhost:7242/" + url + id);
+			var response = await httpClient.DeleteAsync($"{GetUrl.ReturnUrlString()}" + url + id);
 
 			var responseStatusCode = response.StatusCode;
 
@@ -61,7 +61,7 @@ namespace ForeningenFumle.Client.Services.MemberServices
 		public async Task<int> UpdateMember(Member member)
 		{
 			var url = "api/memberapi/";
-			var response = await httpClient.PatchAsJsonAsync("https://localhost:7242/" + url, member);
+			var response = await httpClient.PatchAsJsonAsync($"{GetUrl.ReturnUrlString()}" + url, member);
 
 			var responseStatusCode = response.StatusCode;
 

@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -8,8 +9,9 @@ namespace ForeningenFumle.Shared.Models
 {
 	public abstract class Person
 	{
-		public int Id { get; set; }
+		public int PersonId { get; set; }
 		public string? Name { get; set; } = string.Empty;
+		[EmailAddress(ErrorMessage = "Ugyldig e-mail-adresse.")]
 		public string? Email { get; set; } = string.Empty;
 		public string? Phonenumber { get; set; }
 		public string? Username { get; set; }
@@ -24,7 +26,7 @@ namespace ForeningenFumle.Shared.Models
 
 		public Person(int id)
 		{
-			Id = id;
+			PersonId = id;
 		}
 	}
 }

@@ -11,13 +11,28 @@ namespace ForeningenFumle.Client.Services.EventServices
 			this.httpClient = httpClient;
 		}
 
-		public Task<Event[]?> GetAllEvent()
+		public async Task<Event[]> GetAllEvent()
 		{
-			var url = "api/eventapi/";
-			var result = httpClient.GetFromJsonAsync<Event[]>("https://localhost:7242/" + url);
+			try
+			{
+				var url = "api/eventapi/";
+				var result = await httpClient.GetFromJsonAsync<Event[]>($"{GetUrl.ReturnUrlString()}" + url);
 
-			return result;
+				if (result == null)
+				{
+					Console.WriteLine("No events returned from the API.");
+					return new Event[0]; // Return an empty array if no data is returned
+				}
+
+				return result;
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"Error fetching events: {ex.Message}");
+				return new Event[0]; // Return an empty array on error
+			}
 		}
+
 
 		public async Task<Event?> GetEvent(int id)
 		{
@@ -29,7 +44,7 @@ namespace ForeningenFumle.Client.Services.EventServices
 		public async Task<int> AddEvent(Event eEvent)
 		{
 			var url = "api/eventapi/";
-			var response = await httpClient.PostAsJsonAsync("https://localhost:7242/" + url, eEvent);
+			var response = await httpClient.PostAsJsonAsync($"{GetUrl.ReturnUrlString()}" + url, eEvent);
 			if (response.IsSuccessStatusCode)
 			{
 				Console.WriteLine("Event added successfully.");

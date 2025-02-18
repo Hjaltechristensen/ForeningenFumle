@@ -14,7 +14,7 @@ namespace ForeningenFumle.Client.Services.AdminServices
 		public Task<Admin[]?> GetAllAdmins()
 		{
 			var url = "api/adminapi/";
-			var result = httpClient.GetFromJsonAsync<Admin[]>("https://localhost:7242/" + url);
+			var result = httpClient.GetFromJsonAsync<Admin[]>($"{GetUrl.ReturnUrlString()}" + url);
 
 			return result;
 		}
@@ -22,8 +22,8 @@ namespace ForeningenFumle.Client.Services.AdminServices
 		public async Task<Admin?> GetAdmin(string username)
 		{
 			var url = "api/adminapi/" + username;
-			Console.WriteLine($"Calling API: {"https://localhost:7242/"}{url}");
-			var result = await httpClient.GetFromJsonAsync<Admin>("https://localhost:7242/" + url);
+			Console.WriteLine($"Calling API: {GetUrl.ReturnUrlString()}{url}");
+			var result = await httpClient.GetFromJsonAsync<Admin>($"{GetUrl.ReturnUrlString()}" + url);
 
 			return result;
 		}
@@ -31,7 +31,7 @@ namespace ForeningenFumle.Client.Services.AdminServices
 		public async Task<int> AddAdmin(RegisterModel admin)
 		{
 			var url = "api/adminapi/";
-			var response = await httpClient.PostAsJsonAsync("https://localhost:7242/" + url, admin);
+			var response = await httpClient.PostAsJsonAsync($"{GetUrl.ReturnUrlString()}" + url, admin);
 			if (response.IsSuccessStatusCode)
 			{
 				Console.WriteLine("Admin added successfully.");
@@ -49,7 +49,7 @@ namespace ForeningenFumle.Client.Services.AdminServices
 		public async Task<int> DeleteAdmin(int id)
 		{
 			var url = "api/adminapi/";
-			var response = await httpClient.DeleteAsync("https://localhost:7242/" + url + id);
+			var response = await httpClient.DeleteAsync($"{GetUrl.ReturnUrlString()}" + url + id);
 
 			var responseStatusCode = response.StatusCode;
 
@@ -59,7 +59,7 @@ namespace ForeningenFumle.Client.Services.AdminServices
 		public async Task<int> UpdateAdmin(Admin admin)
 		{
 			var url = "api/adminapi/";
-			var response = await httpClient.PatchAsJsonAsync("https://localhost:7242/" + url, admin);
+			var response = await httpClient.PatchAsJsonAsync($"{GetUrl.ReturnUrlString()}" + url, admin);
 
 			var responseStatusCode = response.StatusCode;
 

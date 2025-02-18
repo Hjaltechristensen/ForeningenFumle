@@ -62,7 +62,7 @@ namespace ForeningenFumle.Server.Repositories.MemberRepository
 				using (var db = new FumleDbContext())
 				{
 					// Find medlemmet (OfType<Member> er ikke nødvendigt her)
-					var member = db.Persons.OfType<Member>().FirstOrDefault(x => x.Id == id);
+					var member = db.Persons.OfType<Member>().FirstOrDefault(x => x.PersonId == id);
 
 					// Hvis medlemmet findes
 					if (member != null)
@@ -92,7 +92,7 @@ namespace ForeningenFumle.Server.Repositories.MemberRepository
 				using (var db = new FumleDbContext())
 				{
 					// Find medlemmet med det angivne ID
-					var foundMember = db.Persons.OfType<Member>().FirstOrDefault(x => x.Id == member.Id);
+					var foundMember = db.Persons.OfType<Member>().FirstOrDefault(x => x.PersonId == member.PersonId);
 
 					// Hvis medlemmet ikke findes, returner false
 					if (foundMember == null)

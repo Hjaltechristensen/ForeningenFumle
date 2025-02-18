@@ -17,7 +17,8 @@ namespace ForeningenFumle.Client.Services.AuthServices
 			try
 			{
 				var url = "api/adminapi/login";
-				var response = await _httpClient.PostAsJsonAsync("https://localhost:7242/" + url, loginModel);
+				var response = await _httpClient.PostAsJsonAsync($"{GetUrl.ReturnUrlString()}" + url, loginModel);
+				Console.WriteLine("API URL: " + GetUrl.ReturnUrlString() + url);
 
 				if (response.IsSuccessStatusCode)
 				{
@@ -28,8 +29,15 @@ namespace ForeningenFumle.Client.Services.AuthServices
 					// Log fejlrespons
 					var errorMessage = await response.Content.ReadAsStringAsync();
 					Console.WriteLine($"Login fejlede. Statuskode: {response.StatusCode}, Fejl: {errorMessage}");
+
+					// Yderligere logning af fejl
+					var responseHeaders = response.Headers.ToString();
+					Console.WriteLine($"Response Headers: {responseHeaders}");
+
+					return false;
 				}
 			}
+
 			catch (Exception ex)
 			{
 				Console.WriteLine($"LoginAsync fejl: {ex.Message}");

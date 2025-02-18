@@ -46,7 +46,7 @@ namespace ForeningenFumle.Server.Services
 					Role = registerModel.Role,
 					Phonenumber = registerModel.Phonenumber
 				};
-				_context.Admins.Add(admin);
+				var check = _context.Admins.Add(admin);
 			}
 			else
 			{

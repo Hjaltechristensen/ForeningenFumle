@@ -17,10 +17,10 @@ namespace ForeningenFumle.Server.Migrations
                 {
                     EventId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Title = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Title = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     Description = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     TimeAndDate = table.Column<DateTime>(type: "datetime2", nullable: false),
-                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false, defaultValue: "Langagerskolen")
+                    Location = table.Column<string>(type: "nvarchar(max)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -28,22 +28,24 @@ namespace ForeningenFumle.Server.Migrations
                 });
 
             migrationBuilder.CreateTable(
-                name: "Person",
+                name: "Persons",
                 columns: table => new
                 {
-                    Id = table.Column<int>(type: "int", nullable: false)
+                    PersonId = table.Column<int>(type: "int", nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
-                    Name = table.Column<string>(type: "nvarchar(max)", nullable: false),
-                    Email = table.Column<string>(type: "nvarchar(450)", nullable: false),
-                    Phonenumber = table.Column<string>(type: "nvarchar(450)", nullable: false),
+                    Name = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Email = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Phonenumber = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    Username = table.Column<string>(type: "nvarchar(450)", nullable: true),
+                    PasswordHash = table.Column<string>(type: "nvarchar(max)", nullable: true),
+                    Role = table.Column<string>(type: "nvarchar(max)", nullable: false),
                     PersonType = table.Column<string>(type: "nvarchar(8)", maxLength: 8, nullable: false),
-                    Rolle = table.Column<string>(type: "nvarchar(max)", nullable: true),
                     AdminAssignmentDate = table.Column<DateTime>(type: "datetime2", nullable: true),
                     MembershipStartDato = table.Column<DateTime>(type: "datetime2", nullable: true)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Person", x => x.Id);
+                    table.PrimaryKey("PK_Persons", x => x.PersonId);
                 });
 
             migrationBuilder.CreateTable(
@@ -52,8 +54,7 @@ namespace ForeningenFumle.Server.Migrations
                 {
                     PersonId = table.Column<int>(type: "int", nullable: false),
                     EventId = table.Column<int>(type: "int", nullable: false),
-                    RegistrationDate = table.Column<DateTime>(type: "datetime2", nullable: false, defaultValueSql: "GETDATE()"),
-                    MemberId = table.Column<int>(type: "int", nullable: true)
+                    RegistrationDate = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -65,45 +66,38 @@ namespace ForeningenFumle.Server.Migrations
                         principalColumn: "EventId",
                         onDelete: ReferentialAction.Restrict);
                     table.ForeignKey(
-                        name: "FK_Registrations_Person_MemberId",
-                        column: x => x.MemberId,
-                        principalTable: "Person",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Registrations_Person_PersonId",
+                        name: "FK_Registrations_Persons_PersonId",
                         column: x => x.PersonId,
-                        principalTable: "Person",
-                        principalColumn: "Id",
+                        principalTable: "Persons",
+                        principalColumn: "PersonId",
                         onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
-                name: "IX_Events_Title",
-                table: "Events",
-                column: "Title",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Person_Email",
-                table: "Person",
+                name: "IX_Persons_Email",
+                table: "Persons",
                 column: "Email",
-                unique: true);
+                unique: true,
+                filter: "[Email] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Person_Phonenumber",
-                table: "Person",
+                name: "IX_Persons_Phonenumber",
+                table: "Persons",
                 column: "Phonenumber",
-                unique: true);
+                unique: true,
+                filter: "[Phonenumber] IS NOT NULL");
+
+            migrationBuilder.CreateIndex(
+                name: "IX_Persons_Username",
+                table: "Persons",
+                column: "Username",
+                unique: true,
+                filter: "[Username] IS NOT NULL");
 
             migrationBuilder.CreateIndex(
                 name: "IX_Registrations_EventId",
                 table: "Registrations",
                 column: "EventId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Registrations_MemberId",
-                table: "Registrations",
-                column: "MemberId");
         }
 
         /// <inheritdoc />
@@ -116,7 +110,7 @@ namespace ForeningenFumle.Server.Migrations
                 name: "Events");
 
             migrationBuilder.DropTable(
-                name: "Person");
+                name: "Persons");
         }
     }
 }

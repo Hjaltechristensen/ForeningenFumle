@@ -95,7 +95,7 @@
 	{
 		if (isUserLoggedIn)
 		{
-			int personId = user.Admin?.Id ?? user.Member?.Id ?? 0;
+			int personId = user.Admin?.PersonId ?? user.Member?.PersonId ?? 0;
 			if (personId != 0)
 			{
 				try
@@ -132,7 +132,7 @@
 		if (user == null || (user.Admin == null && user.Member == null))
 			return;
 
-		int personId = user.Admin?.Id ?? user.Member?.Id ?? 0; // Hent PersonId fra Admin eller Member
+		int personId = user.Admin?.PersonId ?? user.Member?.PersonId ?? 0; // Hent PersonId fra Admin eller Member
 		if (personId == 0)
 			return;
 

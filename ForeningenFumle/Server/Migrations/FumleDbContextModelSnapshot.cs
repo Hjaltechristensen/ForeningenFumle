@@ -52,11 +52,11 @@ namespace ForeningenFumle.Server.Migrations
 
             modelBuilder.Entity("ForeningenFumle.Shared.Models.Person", b =>
                 {
-                    b.Property<int>("Id")
+                    b.Property<int>("PersonId")
                         .ValueGeneratedOnAdd()
                         .HasColumnType("int");
 
-                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("Id"));
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("PersonId"));
 
                     b.Property<string>("Email")
                         .HasColumnType("nvarchar(450)");
@@ -82,7 +82,7 @@ namespace ForeningenFumle.Server.Migrations
                     b.Property<string>("Username")
                         .HasColumnType("nvarchar(450)");
 
-                    b.HasKey("Id");
+                    b.HasKey("PersonId");
 
                     b.HasIndex("Email")
                         .IsUnique()
@@ -112,9 +112,7 @@ namespace ForeningenFumle.Server.Migrations
                         .HasColumnType("int");
 
                     b.Property<DateTime>("RegistrationDate")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("datetime2")
-                        .HasDefaultValueSql("GETDATE()");
+                        .HasColumnType("datetime2");
 
                     b.HasKey("PersonId", "EventId");
 

@@ -208,12 +208,12 @@ else
 		if (isAdmin)
 		{
 			// Kontrollér, om brugernavnet findes blandt andre admins
-			return !allAdmins.Any(a => a.Username == username && a.Id != admin.Id);
+			return !allAdmins.Any(a => a.Username == username && a.PersonId != admin.PersonId);
 		}
 		else
 		{
 			// Kontrollér, om brugernavnet findes blandt andre medlemmer
-			return !allMembers.Any(m => m.Username == username && m.Id != member.Id);
+			return !allMembers.Any(m => m.Username == username && m.PersonId != member.PersonId);
 		}
 	}
 

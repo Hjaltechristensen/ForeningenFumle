@@ -12,14 +12,16 @@ namespace ForeningenFumle.Server.Controllers
 	[ApiController]
 	public class EventController : ControllerBase
 	{
-		private readonly IEventRepository repository = new EventRepositoryEF();
-		private FumleDbContext _dbContext;
+		private readonly IEventRepository repository;
+		private readonly FumleDbContext _dbContext;
+
 
 		public EventController(IEventRepository repository, FumleDbContext dbContext)
 		{
 			this.repository = repository ?? throw new ArgumentNullException(nameof(repository));
 			_dbContext = dbContext ?? throw new ArgumentNullException(nameof(dbContext));
 		}
+
 
 		[HttpGet]
 		public IEnumerable<Event> GetAllEvents()
@@ -48,26 +50,30 @@ namespace ForeningenFumle.Server.Controllers
 		}
 
 		[HttpPost]
-		public void AddEvent(Event eEvent)
+		public IActionResult AddEvent([FromBody] Event eEvent)
 		{
+			Console.WriteLine("➡️ AddEvent() blev kaldt!");
+
 			if (eEvent == null)
 			{
-				Console.WriteLine("eEvent is null");
+				Console.WriteLine("❌ Event er null");
+				return BadRequest("Event data is null");
 			}
-			else
+
+			try
 			{
-				Console.WriteLine("Received event: " + eEvent.Title + ", " + eEvent.TimeAndDate);
-				try
-				{
-					repository.AddEvent(eEvent);
-				}
-				catch (Exception ex)
-				{
-					Console.WriteLine("Error while adding event: " + ex.Message);
-					throw;
-				}
+				repository.AddEvent(eEvent);
+				Console.WriteLine($"✅ Event '{eEvent.Title}' tilføjet til repository!");
+				return Ok(new { message = "Event added successfully" });
+			}
+			catch (Exception ex)
+			{
+				Console.WriteLine($"❌ Fejl ved tilføjelse af event: {ex.Message}");
+				return StatusCode(500, $"An error occurred: {ex.Message}");
 			}
 		}
+
+
 
 		[HttpGet("{id:int}")]
 		public Event FindEvent(int id)

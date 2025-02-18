@@ -6,6 +6,13 @@ namespace ForeningenFumle.Server.Repositories.EventRepository
 {
 	public class EventRepositoryEF : IEventRepository
 	{
+		private readonly FumleDbContext _dbContext;
+
+		public EventRepositoryEF(FumleDbContext dbContext)
+		{
+			_dbContext = dbContext;
+		}
+
 		public List<Event> GetAllEvents()
 		{
 			var db = new FumleDbContext();
@@ -25,22 +32,18 @@ namespace ForeningenFumle.Server.Repositories.EventRepository
 		{
 			throw new NotImplementedException();
 		}
+
 		public void AddEvent(Event @event)
 		{
 			try
 			{
-				// Brug using for korrekt oprydning af DbContext
-				using (var db = new FumleDbContext())
-				{
-					// Tilføj medlemmet til Persons (da Member arver fra Person)
-					db.Events.Add(@event);
-					db.SaveChanges(); // Gem ændringer i databasen
-				}
+				_dbContext.Events.Add(@event);
+				_dbContext.SaveChanges();
+				Console.WriteLine($"Event tilføjet: {@event.Title}");
 			}
 			catch (Exception ex)
 			{
-				// Log eller håndter fejlen
-				Console.WriteLine($"Fejl ved tilføjelse af admin: {ex.Message}");
+				Console.WriteLine($"Fejl ved tilføjelse af event: {ex.Message}");
 			}
 		}
 		public bool DeleteEvent(int id)

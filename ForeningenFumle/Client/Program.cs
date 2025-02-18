@@ -14,7 +14,7 @@ var builder = WebAssemblyHostBuilder.CreateDefault(args);
 builder.RootComponents.Add<App>("#app");
 builder.RootComponents.Add<HeadOutlet>("head::after");
 
-string baseAddress = "https://localhost:7242/";
+string baseAddress = "https://foreningenfumleserver.azurewebsites.net/";
 
 // Tilføj HttpClient for API-kommunikation
 builder.Services.AddHttpClient<IAdminService, AdminService>(client =>
