@@ -27,16 +27,17 @@
 					<button class="loginbutton" type="submit">Login</button>
 				</div>
 			</EditForm>
+			@if (!string.IsNullOrEmpty(errorMessage))
+			{
+				<div class="error-message">
+					@errorMessage
+				</div>
+			}
 		</div>
 	</div>
 }
 
-@if (!string.IsNullOrEmpty(errorMessage))
-{
-	<div class="error-message">
-		@errorMessage
-	</div>
-}
+
 
 
 

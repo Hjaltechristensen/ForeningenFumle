@@ -19,6 +19,7 @@ namespace ForeningenFumle.Shared.Models
 
 		[EmailAddress(ErrorMessage = "Ugyldig e-mail-adresse.")]
 		public string Email { get; set; }
+		[StringLength(8, MinimumLength = 8, ErrorMessage = "Indtast korrekt telefonnummer")]
 		public string Phonenumber { get; set; }
 		public string Name { get; set; }
 

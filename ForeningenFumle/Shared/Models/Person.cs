@@ -10,6 +10,8 @@ namespace ForeningenFumle.Shared.Models
 	public abstract class Person
 	{
 		public int PersonId { get; set; }
+		[Required]
+		[StringLength(50, MinimumLength = 3, ErrorMessage = "Brugernavn skal være mellem 3 og 50 tegn.")]
 		public string? Name { get; set; } = string.Empty;
 		[EmailAddress(ErrorMessage = "Ugyldig e-mail-adresse.")]
 		public string? Email { get; set; } = string.Empty;

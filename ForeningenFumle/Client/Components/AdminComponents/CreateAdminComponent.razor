@@ -4,9 +4,9 @@
 <h3>Opret ny administrator</h3>
 
 <EditForm Model="@AdminModel"
-		  OnValidSubmit="@HandleValidSubmit"
-		  OnInvalidSubmit="@HandleInvalidSubmit"
-		  class="row p-3">
+OnValidSubmit="@HandleValidSubmit"
+OnInvalidSubmit="@HandleInvalidSubmit"
+class="row p-3">
 
 	<DataAnnotationsValidator />
 	<ValidationSummary />
@@ -126,6 +126,11 @@
 
 			// Kald API-metoden for at oprette admin
 			ErrorCode = await Service.AddAdmin(registerModel);
+			if (ErrorCode != 200)
+			{
+				errorMessage = "Admin blev ikke oprettet";
+				return;
+			}
 			Console.WriteLine("Admin added: return code: " + ErrorCode);
 			isSuccessBoxVisible = true;
 		}

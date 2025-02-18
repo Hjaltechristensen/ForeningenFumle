@@ -43,8 +43,10 @@
 							</div>
 							<div class="event-header">
 								<span class="event-date">@item.TimeAndDate.Day</span>
-								<span class="event-day">    @System.Globalization.CultureInfo.GetCultureInfo("da-DK")
-    .TextInfo.ToTitleCase(item.TimeAndDate.ToString("dddd", new System.Globalization.CultureInfo("da-DK")))</span>
+								<span class="event-day">
+									@(char.ToUpper(item.TimeAndDate.ToString("dddd", new System.Globalization.CultureInfo("da-DK"))[0])
+																+ item.TimeAndDate.ToString("dddd", new System.Globalization.CultureInfo("da-DK")).Substring(1))
+								</span>
 
 							</div>
 							<div class="event-details">
