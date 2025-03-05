@@ -1,8 +1,6 @@
-﻿using ForeningenFumle.Client.Services.RegistrationServices;
-using ForeningenFumle.Server.DataAccess;
+﻿using ForeningenFumle.Server.DataAccess;
 using ForeningenFumle.Server.Repositories.EventRepository;
 using ForeningenFumle.Shared.Models;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Net;
 

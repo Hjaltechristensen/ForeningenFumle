@@ -1,0 +1,151 @@
+﻿/* 📱 Generel chat-container */
+.chat-container {
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    padding: 10px;
+    background-color: #f2f2f7; /* Ligner iMessage baggrund */
+
+    flex-grow: 1; /* Gør det muligt at fylde pladsen */
+    overflow-y: auto; /* Gør containeren scrollable */
+    max-height: calc(100vh - 192px); /* Sikrer, at chatten ikke fylder hele skærmen */
+    scrollbar-width: none;
+}
+
+/* 📩 Besked-container */
+.message-container {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    margin: 5px 0;
+    max-width: 100%;
+    margin-bottom: 0px;
+}
+
+/* 🟦 Brugerens egne beskeder */
+.my-message {
+    justify-content: flex-end;
+    align-self: flex-end;
+}
+
+/* 🟩 Andre brugeres beskeder */
+.other-message {
+    justify-content: flex-start;
+    align-self: flex-start;
+}
+
+/* 💬 Besked-bobler */
+.bubble {
+    padding: 10px 10px;
+    border-radius: 18px;
+    font-size: 14px;
+    display: inline-block;
+    position: relative;
+    /*word-wrap: break-word;*/
+    max-width: 100%;
+    line-height: 1.4;
+}
+
+/* 🟦 Blå bobler (egne beskeder) */
+.blue-bubble {
+    background-color: #007aff; /* iMessage blå */
+    color: white;
+    border-top-right-radius: 5px;
+    text-align: left;
+}
+
+/* 🟩 Grå bobler (andre brugere) */
+.gray-bubble {
+    background-color: #e5e5ea; /* iMessage grå */
+    color: black;
+    border-top-left-radius: 5px;
+    text-align: left;
+}
+
+/* 👤 Brugernavn (kun for andre brugere) */
+.sender {
+    font-size: 8px;
+    color: #8e8e93;
+    margin-bottom: 2px;
+    padding-left: 5px;
+}
+
+/* ⏳ Timestamps */
+.timestamp {
+    font-size: 10px;
+    color: rgba(255, 255, 255, 0.7); /* Gennemsigtig hvid for blå bobler */
+    position: absolute;
+    bottom: 1px;
+    right: 8px;
+}
+
+.other-message .timestamp {
+    color: rgba(0, 0, 0, 0.5); /* Gennemsigtig sort for grå bobler */
+}
+
+/* 📜 Scrollbar (gør den diskret som på iPhone) */
+.chat-container::-webkit-scrollbar {
+    width: 5px;
+}
+
+.chat-container::-webkit-scrollbar-thumb {
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 10px;
+}
+
+/* 📝 Input-feltet som i iMessage */
+.chat-input-container {
+    display: flex;
+    align-items: center;
+    padding: 10px;
+    background: white;
+    border-top: 1px solid #d1d1d6;
+    border-radius: 10px;
+}
+
+.chat-input {
+    flex: 1;
+    padding: 10px;
+    font-size: 16px;
+    border: 1px solid #d1d1d6;
+    border-radius: 20px;
+    outline: none;
+    background-color: #f2f2f7;
+}
+
+.send-button {
+    background-color: #007aff;
+    color: white;
+    border: none;
+    padding: 8px 12px;
+    font-size: 16px;
+    border-radius: 50%;
+    margin-left: 10px;
+    cursor: pointer;
+}
+
+    .send-button:hover {
+        background-color: #a6c8ff;
+    }
+
+.chat-input-container {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    background: white;
+    padding: 10px;
+    display: flex;
+    align-items: center;
+    border-top: 1px solid #ccc;
+}
+
+.chat-input {
+    flex-grow: 1;
+    padding: 10px;
+    font-size: 16px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    outline: none;
+    margin-right: 10px;
+}

@@ -4,9 +4,10 @@
 	{
 		public static string ReturnUrlString()
 		{
-			string url = "https://foreningenfumleserver.azurewebsites.net/"; // Online
 #if DEBUG
-			url = "https://localhost:7242/"; // Localhost
+			string url = "https://localhost:7242/"; // Localhost
+#else
+			string url = "https://foreningenfumleserver.azurewebsites.net/"; // Online
 #endif
 			return url;
 		}

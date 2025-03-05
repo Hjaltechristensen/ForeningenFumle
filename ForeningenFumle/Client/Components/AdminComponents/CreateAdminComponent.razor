@@ -4,9 +4,9 @@
 <h3>Opret ny administrator</h3>
 
 <EditForm Model="@AdminModel"
-OnValidSubmit="@HandleValidSubmit"
-OnInvalidSubmit="@HandleInvalidSubmit"
-class="row p-3">
+		  OnValidSubmit="@HandleValidSubmit"
+		  OnInvalidSubmit="@HandleInvalidSubmit"
+		  class="row p-3">
 
 	<DataAnnotationsValidator />
 	<ValidationSummary />
@@ -78,14 +78,14 @@ class="row p-3">
 	[Parameter]
 	public Admin AdminModel { get; set; } = new Admin(); // Initialisering af AdminModel
 	[Inject]
-	public IAdminService Service { get; set; }
+	public IAdminService? Service { get; set; }
 
 	private List<Admin> allAdmins = new List<Admin>();
 	private int ErrorCode { get; set; } = 0;
 	private bool isSuccessBoxVisible = false;
 	private bool isErrorBoxVisible = false;
 	private string? errorMessage;
-	private string password;
+	private string password = string.Empty;
 
 	// Denne metode bliver kaldt under komponentens initialisering.
 	protected override async Task OnInitializedAsync()
@@ -124,8 +124,11 @@ class="row p-3">
 					Phonenumber = AdminModel.Phonenumber
 				};
 
-			// Kald API-metoden for at oprette admin
-			ErrorCode = await Service.AddAdmin(registerModel);
+			if (Service != null)
+			{
+				// Kald API-metoden for at oprette admin
+				ErrorCode = await Service.AddAdmin(registerModel);
+			}
 			if (ErrorCode != 200)
 			{
 				errorMessage = "Admin blev ikke oprettet";

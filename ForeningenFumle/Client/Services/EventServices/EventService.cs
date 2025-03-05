@@ -11,7 +11,7 @@ namespace ForeningenFumle.Client.Services.EventServices
 			this.httpClient = httpClient;
 		}
 
-		public async Task<Event[]> GetAllEvent()
+		public async Task<Event[]?> GetAllEvent()
 		{
 			try
 			{

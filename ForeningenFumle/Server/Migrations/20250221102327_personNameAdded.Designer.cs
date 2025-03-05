@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ForeningenFumle.Server.Migrations
 {
     [DbContext(typeof(FumleDbContext))]
-    [Migration("20250218112837_dataAnnotationsAdded")]
-    partial class dataAnnotationsAdded
+    [Migration("20250221102327_personNameAdded")]
+    partial class personNameAdded
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -51,6 +51,34 @@ namespace ForeningenFumle.Server.Migrations
                     b.HasKey("EventId");
 
                     b.ToTable("Events");
+                });
+
+            modelBuilder.Entity("ForeningenFumle.Shared.Models.Message", b =>
+                {
+                    b.Property<int>("MessageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MessageId"));
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PersonId")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PersonName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<DateTime>("TimeSent")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("MessageId");
+
+                    b.HasIndex("PersonId");
+
+                    b.ToTable("Messages");
                 });
 
             modelBuilder.Entity("ForeningenFumle.Shared.Models.Person", b =>
@@ -144,6 +172,17 @@ namespace ForeningenFumle.Server.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasDiscriminator().HasValue("Medlem");
+                });
+
+            modelBuilder.Entity("ForeningenFumle.Shared.Models.Message", b =>
+                {
+                    b.HasOne("ForeningenFumle.Shared.Models.Person", "Sender")
+                        .WithMany()
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("ForeningenFumle.Shared.Models.Registration", b =>

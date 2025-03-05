@@ -1,0 +1,155 @@
+﻿@using Microsoft.AspNetCore.SignalR.Client
+@using ForeningenFumle.Client.Services.ChatServices;
+
+
+<div class="chat-container">
+	<!-- 📩 Loop gennem beskeder -->
+	@foreach (var message in Messages)
+	{
+		bool isMe = message.PersonId == CurrentUserId;
+
+		<div class="message-container @(isMe ? "my-message" : "other-message")">
+
+			@if (!isMe)
+			{
+				<div class="sender">@message.PersonName</div> <!-- 👤 Viser navn for andre brugere -->
+			}
+
+			<div class="bubble @(isMe ? "blue-bubble" : "gray-bubble")">
+				<span class="text">@message.Content</span>
+				<span class="timestamp">@message.TimeSent.ToString("HH:mm")</span>
+			</div>
+		</div>
+	}
+
+	<!-- 📝 Input-feltet til at skrive en ny besked -->
+	<div class="chat-input-container">
+		<input type="text" class="chat-input" @bind="newMessage" placeholder="iMessage..." @onkeydown="HandleKeyDown">
+		<button class="send-button" @onclick="SendMessage">➤</button>
+	</div>
+</div>
+@code {
+	[Inject]
+	NavigationManager? Navigation { get; set; }
+	[Inject]
+	IJSRuntime? JS { get; set; }
+	[Inject]
+	public IChatService? ChatService { get; set; }
+	[Inject]
+	public UserState? user { get; set; }
+
+	private Admin? admin;
+	private Member? member;
+	private HubConnection? hubConnection;
+	private List<Message> Messages = new();
+	private string? newMessage;
+
+	private string? CurrentUserName;
+	private bool IsUserLoggedIn => CurrentUserId != 0;
+	public event Action? OnUserChanged;
+	private int? _currentUserId;
+
+	private int? CurrentUserId
+	{
+		get => _currentUserId;
+		set
+		{
+			if (_currentUserId != value)
+			{
+				_currentUserId = value;
+				OnUserChanged?.Invoke(); // Trigger event når bruger ændres
+			}
+		}
+	}
+
+
+	protected override async Task OnInitializedAsync()
+	{
+		// await Task.Delay(7000);
+		OnUserChanged += async () => await LoadMessages();
+		CurrentUserName = user?.Member?.Name ?? user?.Admin?.Name ?? "";
+		CurrentUserId = user?.Member?.PersonId ?? user?.Admin?.PersonId ?? 0;
+		if (Navigation != null)
+		{
+
+
+			hubConnection = new HubConnectionBuilder()
+				.WithUrl(Navigation.ToAbsoluteUri("/chathub"))
+				.Build();
+		}
+		if (hubConnection != null)
+		{
+			hubConnection.On<int, string, DateTime, string>("ReceiveMessage", (personId, content, timeSent, personName) =>
+			{
+				var newMsg = new Message
+					{
+						PersonId = personId,
+						Content = content,
+						TimeSent = timeSent,
+						PersonName = personName
+					};
+
+				Messages.Add(newMsg);
+				StateHasChanged();
+			});
+		}
+		if (hubConnection != null)
+		{
+			await hubConnection.StartAsync();
+		}
+	}
+
+	public async Task LoadMessages()
+	{
+		if (CurrentUserId != 0)
+		{
+			Messages = (await ChatService.GetMessagesAsync()).ToList();
+			StateHasChanged(); // Opdater UI
+		}
+	}
+
+
+	private async Task SendMessage()
+	{
+
+		if (!string.IsNullOrWhiteSpace(newMessage))
+		{
+			var message = new Message
+				{
+					PersonId = user?.Member?.PersonId ?? user?.Admin?.PersonId ?? 0,
+					Content = newMessage,
+					PersonName = CurrentUserName
+				};
+
+			if (ChatService != null)
+			{
+				await ChatService.SendMessageAsync(message);
+				newMessage = "";
+			}
+		}
+	}
+
+	private async void ScrollToBottom()
+	{
+		if (JS != null)
+		{
+			await JS.InvokeVoidAsync("scrollToBottom");
+		}
+	}
+
+	public async ValueTask DisposeAsync()
+	{
+		if (hubConnection is not null)
+		{
+			await hubConnection.DisposeAsync();
+		}
+	}
+
+	private async void HandleKeyDown(KeyboardEventArgs e)
+	{
+		if (e.Key == "Enter" && !string.IsNullOrWhiteSpace(newMessage))
+		{
+			await SendMessage();
+		}
+	}
+}

@@ -1,7 +1,6 @@
-﻿using ForeningenFumle.Client.Services;
-using ForeningenFumle.Client.Services.RegistrationServices;
-using ForeningenFumle.Server.DataAccess;
+﻿using ForeningenFumle.Server.DataAccess;
 using ForeningenFumle.Server.Repositories.AdminRepository;
+using ForeningenFumle.Server.Repositories.ChatRepository;
 using ForeningenFumle.Server.Repositories.EventRepository;
 using ForeningenFumle.Server.Repositories.RegistrationRepository;
 using ForeningenFumle.Server.Services;
@@ -19,18 +18,11 @@ builder.Services.AddScoped<IPasswordHasher<Person>, PasswordHasher<Person>>();
 builder.Services.AddScoped<IAdminRepository, AdminRepositoryEF>();
 builder.Services.AddScoped<IEventRepository, EventRepositoryEF>();
 builder.Services.AddScoped<IRegistrationRepository, RegistrationRepositoryEF>();
+builder.Services.AddScoped<IChatRepository, ChatRepository>();
+
+
 
 builder.Services.AddScoped<AuthenticationService>();
-
-//builder.Services.AddCors(options =>
-//{
-//	options.AddPolicy("AllowAllOrigins", policy =>
-//	{
-//		policy.WithOrigins("https://foreningenfumleserver.azurewebsites.net") // Erstat med din Blazor-klients URL
-//			  .AllowAnyMethod()
-//			  .AllowAnyHeader();
-//	});
-//});
 
 // Authentication Configuration
 builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationScheme)
@@ -39,20 +31,21 @@ builder.Services.AddAuthentication(CookieAuthenticationDefaults.AuthenticationSc
 		options.LoginPath = "/login";
 		options.LogoutPath = "/logout";
 	});
-
-//builder.Services.AddCors(options =>
-//{
-//	options.AddPolicy("AllowBlazorClient", policy =>
-//	{
-//		policy.WithOrigins($"{GetUrl.ReferenceEquals}") // Skift til din Blazor URL
-//			  .AllowAnyMethod()
-//			  .AllowAnyHeader();
-//	});
-//});
-
+builder.Services.AddCors(options =>
+{
+	options.AddPolicy("AllowAllOrigins", policy =>
+	{
+		policy.AllowAnyOrigin()  // Tillader alle domæner
+			  .AllowAnyHeader()  // Tillader alle headers
+			  .AllowAnyMethod(); // Tillader alle HTTP-metoder
+	});
+});
 // Tilføj DbContext og konfigurér databaseforbindelsen
 builder.Services.AddDbContext<FumleDbContext>(options =>
 	options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+builder.Services.AddSignalR();
+
 
 var app = builder.Build();
 
@@ -66,7 +59,9 @@ else
 	app.UseExceptionHandler("/Error");
 	app.UseHsts();
 }
-//app.UseCors("AllowAllOrigins");
+
+
+app.UseCors("AllowAllOrigins"); // Aktivér CORS-politikken
 app.UseHttpsRedirection();
 
 // Authentication and Authorization
@@ -77,7 +72,9 @@ app.UseBlazorFrameworkFiles();
 app.UseStaticFiles();
 
 app.UseRouting();
-//app.UseCors("AllowBlazorClient"); // Brug samme navn som i AddCors
+
+app.MapHub<ChatHubRepository>("/chathub");
+
 
 app.MapRazorPages();
 app.MapControllers();

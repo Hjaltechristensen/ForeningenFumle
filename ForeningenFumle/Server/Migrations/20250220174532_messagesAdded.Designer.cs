@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace ForeningenFumle.Server.Migrations
 {
     [DbContext(typeof(FumleDbContext))]
-    [Migration("20250218105317_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20250220174532_messagesAdded")]
+    partial class messagesAdded
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -53,6 +53,30 @@ namespace ForeningenFumle.Server.Migrations
                     b.ToTable("Events");
                 });
 
+            modelBuilder.Entity("ForeningenFumle.Shared.Models.Message", b =>
+                {
+                    b.Property<int>("MessageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("int");
+
+                    SqlServerPropertyBuilderExtensions.UseIdentityColumn(b.Property<int>("MessageId"));
+
+                    b.Property<string>("Content")
+                        .HasColumnType("nvarchar(max)");
+
+                    b.Property<int>("PersonId")
+                        .HasColumnType("int");
+
+                    b.Property<DateTime>("TimeSent")
+                        .HasColumnType("datetime2");
+
+                    b.HasKey("MessageId");
+
+                    b.HasIndex("PersonId");
+
+                    b.ToTable("Messages");
+                });
+
             modelBuilder.Entity("ForeningenFumle.Shared.Models.Person", b =>
                 {
                     b.Property<int>("PersonId")
@@ -65,7 +89,9 @@ namespace ForeningenFumle.Server.Migrations
                         .HasColumnType("nvarchar(450)");
 
                     b.Property<string>("Name")
-                        .HasColumnType("nvarchar(max)");
+                        .IsRequired()
+                        .HasMaxLength(50)
+                        .HasColumnType("nvarchar(50)");
 
                     b.Property<string>("PasswordHash")
                         .HasColumnType("nvarchar(max)");
@@ -142,6 +168,17 @@ namespace ForeningenFumle.Server.Migrations
                         .HasColumnType("datetime2");
 
                     b.HasDiscriminator().HasValue("Medlem");
+                });
+
+            modelBuilder.Entity("ForeningenFumle.Shared.Models.Message", b =>
+                {
+                    b.HasOne("ForeningenFumle.Shared.Models.Person", "Sender")
+                        .WithMany()
+                        .HasForeignKey("PersonId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Sender");
                 });
 
             modelBuilder.Entity("ForeningenFumle.Shared.Models.Registration", b =>

@@ -11,6 +11,7 @@ namespace ForeningenFumle.Server.DataAccess
 		public DbSet<Member> Members { get; set; }
 		public DbSet<Event> Events { get; set; }
 		public DbSet<Registration> Registrations { get; set; }
+		public DbSet<Message> Messages { get; set; }
 
 		public FumleDbContext(DbContextOptions<FumleDbContext> options)
 		: base(options) // Videregiv options til base-konstruktøren
@@ -18,14 +19,14 @@ namespace ForeningenFumle.Server.DataAccess
 		}
 		public FumleDbContext()
 		{
-			
+
 		}
 
-		//protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-		//	=> optionsBuilder.UseSqlServer("Server=LAPTOP-KOEHKSOQ;Database=ForeningenFumle;Trusted_Connection=True;TrustServerCertificate=True;");
-
 		protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-			=> optionsBuilder.UseSqlServer("Server=tcp:myfreesqldbserverfumle.database.windows.net,1433;Initial Catalog=myFreeDB;Persist Security Info=False;User ID=Hjalte;Password=13Qe35Dg35^Cb;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
+			=> optionsBuilder.UseSqlServer("Server=LAPTOP-KOEHKSOQ;Database=ForeningenFumle;Trusted_Connection=True;TrustServerCertificate=True;");
+
+		//protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+		//	=> optionsBuilder.UseSqlServer("Server=LAPTOP-KOEHKSOQ;Database=ForeningenFumle;Trusted_Connection=True;");
 
 		protected override void OnModelCreating(ModelBuilder modelBuilder)
 		{
@@ -46,6 +47,12 @@ namespace ForeningenFumle.Server.DataAccess
 				.HasForeignKey(t => t.EventId)          // Fremmednøgle i Tilmelding
 				.OnDelete(DeleteBehavior.Restrict);     // Restrict: Event kan ikke slettes, hvis der findes tilmeldinger
 
+			modelBuilder.Entity<Message>()
+				.HasOne(m => m.Sender)
+				.WithMany() // En person kan sende flere beskeder
+				.HasForeignKey(m => m.PersonId)
+				.OnDelete(DeleteBehavior.Cascade); // Sletter beskeder, hvis brugeren slettes
+
 			modelBuilder.Entity<Person>()
 				.Property(c => c.PersonId)
 				.ValueGeneratedOnAdd();
@@ -62,7 +69,7 @@ namespace ForeningenFumle.Server.DataAccess
 				.HasIndex(p => p.Username)
 				.IsUnique();
 
-				modelBuilder.Entity<Person>()
+			modelBuilder.Entity<Person>()
 				.HasDiscriminator<string>("PersonType") // Tilføj kolonne 'PersonType'
 				.HasValue<Person>("Person")            // Basisværdien
 				.HasValue<Member>("Medlem")            // Værdi for Medlem
