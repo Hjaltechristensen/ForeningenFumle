@@ -25,4 +25,10 @@
   <ItemGroup>
     <Folder Include="Components\CalenderComponents\" />
   </ItemGroup>
+	<ItemGroup>
+		<Content Include="Components\**\*.razor.css" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
+	<ItemGroup>
+		<Content Include="Pages\**\*.razor.css" CopyToOutputDirectory="PreserveNewest" />
+	</ItemGroup>
 </Project>
